@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Login
+Route::get('/', [AuthController::class, 'login'])->name('halamanLogin');
+
+
+// Mahasiswa
+Route::get('/dashboard', [MahasiswaController::class, 'index'])->name('halamanDashboard');
+Route::get('/konsultasi', [MahasiswaController::class, 'konsul'])->name('halamanKonsultasi');
