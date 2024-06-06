@@ -16,8 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');
             $table->string('nidn')->unique();
-            $table->string('department');
-            $table->string('gambar_profil');
+            $table->string('nama')->nullable();
+            $table->string('department')->nullable();
+            $table->longText('deskripsi')->nullable();
+            $table->string('gambar_profil')->nullable();
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->timestamps();

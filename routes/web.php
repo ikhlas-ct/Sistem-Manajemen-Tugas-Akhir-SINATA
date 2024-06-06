@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:kaprodi'])->group(function () {
 // Dosen routes
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('dosen/dashboard', [DosenController::class, 'dashboard'])->name('dosen.dashboard');
+    Route::get('dosen/profile', [DosenController::class, 'profile'])->name('dosen.profile');
+    Route::put('/dosen/profile/update', [DosenController::class, 'updateProfile'])->name('dosen.profile.update');
     Route::get('/konsultasi', [DosenController::class, 'konsultasi_show'])->name('Halaman_Konsultasi');
 });
 

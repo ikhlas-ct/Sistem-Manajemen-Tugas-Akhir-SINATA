@@ -11,12 +11,12 @@ class Dosen extends Model
     protected $table = 'dosen';
 
     protected $fillable = [
-        'user_id', 'nidn', 'department', 'gambar_profil', 'no_hp', 'alamat', 'created_at', 'updated_at'
+        'user_id', 'nidn','nama', 'department', 'deskripsi','gambar_profil', 'no_hp', 'alamat', 'created_at', 'updated_at'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
 }
