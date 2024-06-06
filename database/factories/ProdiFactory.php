@@ -20,7 +20,6 @@ class ProdiFactory extends Factory
 
         return [
             'user_id' => $user->id,
-                'username' => $user->username,
                 'nidn' => $this->faker->numerify('##########'), // Misalnya menggunakan faker untuk NIDN
                 'gambar_profil' => 'https://via.placeholder.com/200x200.png', // Ganti dengan gambar profil yang sesuai
                 'no_hp' => $this->faker->phoneNumber,
