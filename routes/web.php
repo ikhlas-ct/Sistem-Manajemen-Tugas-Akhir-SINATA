@@ -42,5 +42,5 @@ Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::fallback(function () {
-    return redirect()->route('dashboard');
+    return redirect('dashboard');
 });
