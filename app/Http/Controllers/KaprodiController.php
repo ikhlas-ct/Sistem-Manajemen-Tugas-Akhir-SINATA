@@ -10,4 +10,9 @@ class KaprodiController extends Controller
     {
         $this->middleware('role:kaprodi');
     }
+
+    public function dashboard()
+    {
+        return view('Kaprodi.Dashboard.dashboard');
+    }
 }

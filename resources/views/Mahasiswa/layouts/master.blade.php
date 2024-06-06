@@ -12,7 +12,7 @@
         <div class="container-fluid">
             <div class="row">
                 <nav class="col-2 d-flex flex-column bg-dark vh-100">
-                    <img src="{{asset('assets/login_logo.png')}}" alt="Logo" class="img-fluid" style="width: 150px;">
+                    <img src="{{asset('assets/logo.png')}}" alt="Logo" class="img-fluid" style="width: 150px;">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2">
                             <a href="{{ route('halamanDashboard') }}" class="nav-link text-light d-flex align-items-center">

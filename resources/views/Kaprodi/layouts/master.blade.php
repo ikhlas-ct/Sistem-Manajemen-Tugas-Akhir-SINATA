@@ -15,51 +15,39 @@
                     <img src="{{asset('assets/logo.png')}}" alt="Logo" class="img-fluid" style="width: 150px;">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2">
-                            <a href="{{ route('dosen.dashboard') }}" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-home" style="margin-right: 27px"></i>
+                            <a href="{{ route('halamanDashboard') }}" class="nav-link text-light d-flex align-items-center">
+                                <i class="fas fa-home" style="margin-right: 35px"></i>
                                 <span>Dashboard</span>
                             </a>
                         </li>
                         <li class="nav-item mb-2">
                             <a href="{{ route('halamanKonsultasi') }}" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-comment-dots" style="margin-right: 30px"></i>
-                                <span>Konsultasi</span>           
+                                <i class="fas fa-solid fa-users-gear" style="margin-right: 35px"></i>
+                                <span>Manajemen Pengguna</span>           
                             </a>
                         </li>
                         <li class="nav-item mb-2">
                             <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="far fa-calendar-alt" style="margin-right: 30px"></i>
-                                <span>Tanggal Penting</span> 
+                                <i class="far fa-calendar-alt" style="margin-right: 40px"></i>
+                                <span>Penjadwalan</span> 
                             </a>
                         </li>
                         <li class="nav-item mb-2">
                             <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-user-graduate" style="margin-right: 30px"></i>
-                                <span>Data Mahasiswa</span>
+                                <i class="fas fa-solid fa-book" style="margin-right: 40px"></i>
+                                <span>Manajemen Data</span>
                             </a>
                         </li>
                         <li class="nav-item mb-2">
                             <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-chalkboard-teacher" style="margin-right: 26px"></i>
-                                <span>Data Dosen</span> 
+                                <i class="fas fa-solid fa-house-laptop" style="margin-right: 35px"></i>
+                                <span>Manajemen Ruangan</span> 
                             </a>
                         </li>
                         <li class="nav-item mb-2">
                             <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-book-open" style="margin-right: 28px"></i>
-                                <span>Pengajuan TA</span> 
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-clipboard-list" style="margin-right: 32px"></i>
-                                <span>Logbook</span>
-                            </a>
-                        </li>
-                        <li class="nav-item mb-2">
-                            <a href="#" class="nav-link text-light d-flex align-items-center">
-                                <i class="fas fa-file-alt" style="margin-right: 30px"></i>
-                                <span>Dokumen</span>
+                                <i class="fas fa-solid fa-square-poll-vertical" style="margin-right: 40px"></i>
+                                <span>Laporan Statistik</span> 
                             </a>
                         </li>
                     </ul>
@@ -83,7 +71,6 @@
                                                 </form>
                                             </li>
                                         </ul>
-                                                                              
                                     </div>
                                 </div>
                             </div>
