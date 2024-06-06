@@ -15,7 +15,7 @@
                     <img src="{{asset('assets/login_logo.png')}}" alt="Logo" class="img-fluid" style="width: 150px;">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2">
-                            <a href="{{ route('halamanDashboard') }}" class="nav-link text-light d-flex align-items-center">
+                            <a href="{{ route('dosen.dashboard') }}" class="nav-link text-light d-flex align-items-center">
                                 <i class="fas fa-home" style="margin-right: 27px"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -83,6 +83,7 @@
                                                 </form>
                                             </li>
                                         </ul>
+                                                                              
                                     </div>
                                 </div>
                             </div>

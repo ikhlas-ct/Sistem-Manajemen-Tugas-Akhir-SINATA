@@ -17,17 +17,27 @@
             <div class="col-md-4 border border-dark p-4 rounded">
                 <p class="text-center mb-3">Welcome back! 👋</p>
                 <h4 class="text-center mb-4">Login to your account</h4>
-                <form>
+                <form method="POST" action="{{ route('login.post') }}">
+                    @csrf
                     <div class="mb-3">
                         <label class="fw-semibold mb-2" for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter username">
+                        <input name="username" type="text" class="form-control" id="username" placeholder="Enter username" required autofocus>
                     </div>
                     <div class="mb-3">
                         <label class="fw-semibold mb-2" for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter password">
+                        <input name="password" type="password" class="form-control" id="password" placeholder="Enter password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">LOGIN</button>
                 </form>
+                @if ($errors->any())
+                <div class="alert alert-danger mt-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             </div>
         </div>
     </div>
