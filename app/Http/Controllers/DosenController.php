@@ -21,7 +21,8 @@ class DosenController extends Controller
 
         return view('Dosen.Biodata.biodata');
     }
-    public function updateProfile(Request $request){
+    public function updateProfile(Request $request)
+    {
         $user = Auth::user();
         $dosen = $user->dosen;
         $dosen->nidn = $request->nidn;
@@ -32,9 +33,8 @@ class DosenController extends Controller
         $dosen->deskripsi = $request->deskripsi;
         $dosen->save();
         return redirect()->route('dosen.profile')->with('success', 'Profile updated successfully.');
-
     }
-    
+
 
     public function konsultasi_show()
     {
