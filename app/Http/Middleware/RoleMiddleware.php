@@ -23,6 +23,6 @@ class RoleMiddleware
             }
         }
 
-        return redirect()->route('dashboard'); // Halaman default jika role tidak sesuai
+        return redirect('dashboard'); // Halaman default jika role tidak sesuai
     }
 }

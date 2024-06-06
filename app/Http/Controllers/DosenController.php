@@ -12,7 +12,7 @@ class DosenController extends Controller
     }
     public function Dashboard()
     {
-        return view('Dosen.Dashboard.Dashboard');
+        return view('Dosen.dashboard.Dashboard');
     }
 
     public function konsultasi_show()

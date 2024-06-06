@@ -16,17 +16,13 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->only('username', 'password');
-        // dd($credentials);
-        // Tambahkan logging untuk membantu debug
-        log ::info('Attempting to authenticate user', $credentials);
-    
+        log::info('Attempting to authenticate user', $credentials);
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-    
             Log::info('User authenticated successfully', ['user_id' => Auth::id()]);
-    
             $user = Auth::user();
-    
+
             switch ($user->role) {
                 case 'dosen':
                     return redirect()->route('dosen.dashboard');
@@ -34,26 +30,26 @@ class AuthController extends Controller
                     return redirect()->route('halamanDashboard');
                 case 'kaprodi':
                     return redirect()->route('kaprodi.dashboard');
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
                 default:
-                    return redirect()->route('home'); // atau halaman default lainnya
+                    return redirect()->route('home');
             }
         }
-    
+
         Log::warning('Failed to authenticate user', $credentials);
-    
+
         return back()->withErrors([
             'username' => 'The provided credentials do not match our records.',
         ]);
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
-    
 }
