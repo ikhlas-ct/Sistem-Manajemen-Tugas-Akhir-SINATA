@@ -11,8 +11,15 @@ class Prodi extends Model
     protected $table = 'prodi';
 
     protected $fillable = [
-        'user_id', 'username', 'nidn ', 'gambar_profil', 'no_hp', 'alamat', 'created_at', 'updated_at'
+        'user_id', 
+        'gambar',
+        'nama', 
+        'nidn', 
+        'departemen', 
+        'no_hp', 
+        'alamat', 
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

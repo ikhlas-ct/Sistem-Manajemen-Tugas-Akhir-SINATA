@@ -27,9 +27,8 @@ class MahasiswaFactory extends Factory
             'user_id' => $user->id,
             'nim' => $this->faker->unique()->numerify('##########'),
             'nama' => $this->faker->name,
-            'email' => $user->email, // Menggunakan email dari tabel user
-            'program_studi' => $this->faker->randomElement(['Teknik Informatika', 'Sistem Informasi', 'Teknik Elektro']),
-            'gambar_profil' => $this->faker->imageUrl(200, 200, 'people'),
+            'fakultas' => $this->faker->randomElement(['Teknik Informatika', 'Sistem Informasi', 'Teknik Elektro']),
+            'gambar' => $this->faker->imageUrl(200, 200, 'people'),
             'no_hp' => $this->faker->phoneNumber,
             'alamat' => $this->faker->address,
             'created_at' => now(),

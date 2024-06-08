@@ -15,10 +15,23 @@
         rel="stylesheet">
     {{-- Sweet Alert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.all.min.js"></script>
+    {{-- font awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         html,
         body {
             font-family: "Poppins", sans-serif;
+        }
+
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .icon-overlay {
+            position: absolute;
+            top: 5px;
+
         }
     </style>
 </head>
@@ -56,7 +69,7 @@
                 <div class="container-fluid">
                     <!--  Row 1 -->
                     @yield('content')
-                    @include('patrials.footer')
+                    {{-- @include('patrials.footer') --}}
                 </div>
             </div>
         @endif
@@ -68,17 +81,7 @@
     <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-    {{-- <script>
-        $(document).ready(function() {
-            Swal.fire({
-                icon: "success",
-                title: "Selamat!",
-                text: "Anda telah berhasil!",
-                showConfirmButton: false,
-                timer: 1500
-            });
-        });
-    </script> --}}
+    @yield('scripts')
 </body>
 
 </html>

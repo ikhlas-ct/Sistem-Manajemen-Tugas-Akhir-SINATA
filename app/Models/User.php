@@ -14,7 +14,13 @@ class User extends Authenticatable
     protected $table = 'user'; // Tambahkan ini untuk menentukan tabel
 
     protected $fillable = [
-        'username', 'email', 'email_verified_at', 'password', 'role', 'remember_token', 'created_at', 'updated_at'
+        'username', 
+        'email', 
+        'email_verified_at', 
+        'password', 'role', 
+        'remember_token', 
+        'created_at', 
+        'updated_at'
     ];
 
     /**
@@ -48,8 +54,4 @@ class User extends Authenticatable
     {
         return $this->hasOne(Prodi::class);
     }
-
-
-
-
 }

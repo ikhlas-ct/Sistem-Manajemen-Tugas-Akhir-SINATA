@@ -29,7 +29,7 @@ class DosenFactory extends Factory
             'nidn' => $this->faker->unique()->numerify('##########'),
             'nama' => $this->faker->name,
             'department' => $this->faker->randomElement(['Teknik Informatika', 'Sistem Informasi', 'Teknik Elektro']),
-            'gambar_profil' => $this->faker->imageUrl(200, 200, 'people'),
+            'gambar' => $this->faker->imageUrl(200, 200, 'people'),
             'deskripsi'=> $this->faker->paragraph,
             'no_hp' => $this->faker->phoneNumber,
             'alamat' => $this->faker->address,

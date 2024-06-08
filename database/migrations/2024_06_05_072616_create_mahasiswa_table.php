@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nim')->unique();
-            $table->string('email')->unique();
-            $table->string('program_studi')->nullable();
-            $table->string('gambar_profil')->nullable();
+            $table->string('nim')->unique()->nullable();
+            $table->string('fakultas')->nullable();
+            $table->string('gambar')->nullable();
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->unsignedBigInteger('user_id');
