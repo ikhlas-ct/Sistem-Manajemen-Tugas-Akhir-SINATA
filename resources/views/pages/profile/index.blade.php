@@ -18,9 +18,8 @@
                         <div class="row">
                             <div class="col-4 d-flex align-items-center">
                                 <div class="position-relative d-inline-block">
-                                    @dd(Auth::user()->dosen->gambar)
                                     <img id="current-profile-image" class="img-fluid img-thumbnail rounded-5"
-                                        src="{{ asset('assets/images/profile/user-1.jpg') }}" alt="">
+                                        src="{{ asset('storage/' . $user->prodi->gambar) }}" alt="Profile Image">
                                     <span class="position-absolute top-0 end-0 p-4">
                                         <div id="profile-image" class="bg-white p-2 rounded-2 cursor-pointer">
                                             <i class="fas fa-camera fs-5"></i>
@@ -252,7 +251,7 @@
                             <div class="col-4 d-flex align-items-center">
                                 <div class="position-relative d-inline-block">
                                     <img id="current-profile-image" class="img-fluid img-thumbnail rounded-5"
-                                        src="{{ asset('assets/images/profile/user-1.jpg') }}" alt="">
+                                        src="{{ asset('storage/' . $user->mahasiswa->gambar) }}" alt="Profile Image">
                                     <span class="position-absolute top-0 end-0 p-4">
                                         <div id="profile-image" class="bg-white p-2 rounded-2 cursor-pointer">
                                             <i class="fas fa-camera fs-5"></i>
