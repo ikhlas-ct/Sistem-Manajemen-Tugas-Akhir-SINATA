@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [MahasiswaController::class, 'update'])->name('profileUpdate');
+    Route::put('/profileProdi/update', [KaprodiController::class, 'updateProdi'])->name('profileUpdateProdi');
 });
 
 // // Admin routes

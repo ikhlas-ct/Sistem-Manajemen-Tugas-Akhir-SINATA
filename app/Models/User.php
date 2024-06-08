@@ -50,7 +50,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Mahasiswa::class);
     }
-    public function kaprodi()
+    public function prodi()
     {
         return $this->hasOne(Prodi::class);
     }

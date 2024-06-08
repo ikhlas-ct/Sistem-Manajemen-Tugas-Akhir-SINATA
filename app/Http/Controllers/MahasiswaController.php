@@ -6,6 +6,7 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\AlertHelper;
 
 class MahasiswaController extends Controller
 {
@@ -48,7 +49,7 @@ class MahasiswaController extends Controller
         }
 
         // Find the Mahasiswa record by the authenticated user's ID
-        $mahasiswa = Mahasiswa::where('user_id', $user->id)->firstOrFail();
+        $mahasiswa = Mahasiswa::where('user_id', $user->id)->first();
 
         if ($request->hasFile('gambar')) {
             $path = $request->file('gambar')->store('profile_images', 'public');
@@ -62,6 +63,8 @@ class MahasiswaController extends Controller
         $mahasiswa->fakultas = $request->fakultas;
 
         $mahasiswa->save();
+
+        AlertHelper::alertSuccess('Anda telah berhasil mengupdate profile', 'Selamat!', 2000);
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
