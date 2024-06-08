@@ -53,6 +53,8 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('halamanDashboard');
     Route::get('/konsultasi', [MahasiswaController::class, 'konsul'])->name('halamanKonsultasi');
+    Route::get('/tgl_penting', [MahasiswaController::class, 'tgl_penting'])->name('halamanTanggal');
+    Route::get('/biodata', [MahasiswaController::class, 'biodata'])->name('halamanBiodata');
 });
 
 // // Fallback route

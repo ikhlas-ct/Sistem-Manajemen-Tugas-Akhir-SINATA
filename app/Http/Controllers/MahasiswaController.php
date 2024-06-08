@@ -17,6 +17,16 @@ class MahasiswaController extends Controller
 
     public function konsul()
     {
-        return view('Mahasiswa.Konsultasi.konsultasi');
+        return view('pages.Mahasiswa.Konsultasi.konsultasi');
+    }
+
+    public function tgl_penting()
+    {
+        return view('pages.Mahasiswa.TanggalPenting.tanggal_penting');
+    }
+
+    public function biodata()
+    {
+        return view('pages.Mahasiswa.Biodata.biodata');
     }
 }
