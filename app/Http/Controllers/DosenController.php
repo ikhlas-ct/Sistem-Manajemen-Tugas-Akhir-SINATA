@@ -82,41 +82,51 @@ class DosenController extends Controller
         return view('Mahasiswa.Konsultasi.konsultasi');
     }
 
-    public function updatePassword(Request $request)
-    {
-        // dd($request->all());
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore(Auth::user()->id)],
+        'password_lama' => ['required'],
+        'password' => 'required|confirmed', // Password confirmation
+    ], [
+        'username.required' => 'Username harus diisi.',
+        'username.max' => 'Username maksimal 255 karakter.',
+        'username.unique' => 'Username sudah digunakan oleh pengguna lain.',
+        'password_lama.required' => 'Password lama harus diisi.',
+        'password.required' => 'Password baru harus diisi.',
+        'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+    ]);
 
-        $request->validate([
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore(Auth::user()->id)],
-            'password_lama' => ['required',],
-            'password' => 'required|confirmed', // Password confirmation
+    $user = Auth::user();
 
-        ], [
-            'username.required' => 'Username harus diisi.',
-            'username.max' => 'Username maksimal 255 karakter.',
-            'username.unique' => 'Username sudah digunakan oleh pengguna lain.',
-            'password_lama.required' => 'Password lama harus diisi.',
-            'password.required' => 'Password is required',
-            'password.confirmed' => 'Password confirmation does not match',
-        ]);
-    
-        $user = Auth::user();
-    
-        // Validasi password lama
-        if (!Hash::check($request->password_lama, $user->password)) {
-            return back()->withErrors(['password_lama' => 'Password lama tidak cocok']);
-        }
-    
-        // Update username
-        $user->username = $request->username;
-        $user->save();
-    
-        // Update password
-        $user->password = Hash::make($request->password_baru);
-        $user->save();
-    
-        return redirect()->back()->with('success', 'Username dan password berhasil diperbarui');
+    // Validasi password lama
+    if (!Hash::check($request->password_lama, $user->password)) {
+        return back()->withErrors(['password_lama' => 'Password lama tidak cocok']);
     }
+
+    // Update username
+    $user->username = $request->username;
+    $user->save();
+
+    // Update password
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    // Hapus gambar lama jika ada
+    if ($user->profile_image) {
+        $gambarProfilPath = 'dosen_images/' . $user->profile_image;
+
+        // Hapus gambar dari storage
+        if (Storage::disk('public')->exists($gambarProfilPath)) {
+            Storage::disk('public')->delete($gambarProfilPath);
+            // Set kolom gambar_profil ke null (jika ada)
+            $user->profile_image = null;
+            $user->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Username dan password berhasil diperbarui');
+}
         
     
     
