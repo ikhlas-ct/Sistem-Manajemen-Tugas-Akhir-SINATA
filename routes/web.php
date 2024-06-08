@@ -51,6 +51,8 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('dosen/profile', [DosenController::class, 'profile'])->name('dosen.profile');
     Route::put('/dosen/profile/update', [DosenController::class, 'updateProfile'])->name('dosen.profile.update');
     Route::get('/konsultasi', [DosenController::class, 'konsultasi_show'])->name('Halaman_Konsultasi');
+    Route::put('/dosen/update/password', [DosenController::class, 'updatepassword'])->name('dosen.update.password');
+
 });
 
 // // Mahasiswa routes

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,47 +10,43 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $table = 'user'; // Tambahkan ini untuk menentukan tabel
+
+    protected $table = 'users'; // Sesuaikan dengan nama tabel yang benar
 
     protected $fillable = [
-        'username', 
-        'email', 
-        'email_verified_at', 
-        'password', 'role', 
-        'remember_token', 
-        'created_at', 
-        'updated_at'
+        'username',
+        'email',
+        'email_verified_at',
+        'password',
+        'role',
+        'remember_token',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
     public function dosen()
     {
-        return $this->hasOne(Dosen::class,'user_id');
+        return $this->hasOne(Dosen::class, 'user_id'); // Sesuaikan dengan foreign key yang digunakan di tabel Dosen
     }
+
     public function mahasiswa()
     {
-        return $this->hasOne(Mahasiswa::class);
+        return $this->hasOne(Mahasiswa::class, 'user_id'); // Sesuaikan dengan foreign key yang digunakan di tabel Mahasiswa
     }
+<<<<<<< HEAD
     public function prodi()
+=======
+
+    public function kaprodi()
+>>>>>>> 5262d3a9af7906cc070c4372100d882e4b479224
     {
-        return $this->hasOne(Prodi::class);
+        return $this->hasOne(Prodi::class, 'user_id'); // Sesuaikan dengan foreign key yang digunakan di tabel Prodi
     }
 }
