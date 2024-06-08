@@ -7,6 +7,7 @@ use App\Http\Controllers\KaprodiController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
@@ -32,7 +33,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [MahasiswaController::class, 'update'])->name('profileUpdate');
-    Route::put('/profileProdi/update', [KaprodiController::class, 'updateProdi'])->name('profileUpdateProdi');
 });
 
 // // Admin routes
@@ -43,6 +43,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // // Kaprodi routes
 Route::middleware(['auth', 'role:kaprodi'])->group(function () {
     Route::get('kaprodi/dashboard', [KaprodiController::class, 'dashboard'])->name('kaprodi.dashboard');
+    Route::put('/profileProdi/update', [KaprodiController::class, 'updateProdi'])->name('profileUpdateProdi');
+    Route::put('/passwordProdi/update', [KaprodiController::class, 'updatePassword'])->name('passwordUpdateProdi');
 });
 
 // // Dosen routes
@@ -52,12 +54,12 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::put('/dosen/profile/update', [DosenController::class, 'updateProfile'])->name('dosen.profile.update');
     Route::get('/konsultasi', [DosenController::class, 'konsultasi_show'])->name('Halaman_Konsultasi');
     Route::put('/dosen/update/password', [DosenController::class, 'updatepassword'])->name('dosen.update.password');
-
 });
 
 // // Mahasiswa routes
 Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('halamanDashboard');
+    Route::put('/passwordProdi/update', [MahasiswaController::class, 'updatePassword'])->name('passwordUpdateMahasiswa');
     Route::get('/konsultasi', [MahasiswaController::class, 'konsul'])->name('halamanKonsultasi');
     Route::get('/tgl_penting', [MahasiswaController::class, 'tgl_penting'])->name('halamanTanggal');
 });

@@ -228,6 +228,9 @@ body {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+.text-color {
+    color: var(--bs-card-title-color);
+}
 hr {
     margin: 1rem 0;
     color: inherit;
@@ -16833,7 +16836,7 @@ ul {
     object-fit: cover;
 }
 .card-title {
-    font-size: 18px;
+    font-size: 22px;
 }
 .card-subtitle {
     font-size: 14px;
