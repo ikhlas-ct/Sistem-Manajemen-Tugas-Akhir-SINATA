@@ -5,7 +5,7 @@ namespace App\Helpers;
 class FiturHelper
 {
     /**
-     * Determine if the logged-in user is a superadmin.
+     * Determine if the logged-in user is a dosen.
      *
      * @return bool
      */
@@ -15,7 +15,7 @@ class FiturHelper
     }
 
     /**
-     * Determine if the logged-in user is a superadmin.
+     * Determine if the logged-in user is a kaprodi.
      *
      * @return bool
      */
@@ -25,7 +25,7 @@ class FiturHelper
     }
 
     /**
-     * Determine if the logged-in user is a superadmin.
+     * Determine if the logged-in user is a mahasiswa.
      *
      * @return bool
      */
@@ -33,4 +33,46 @@ class FiturHelper
     {
         return auth()->user()->role == 'mahasiswa';
     }
+
+    /**
+     * Get the profile image URL based on the user's role.
+     *
+     * @return string
+     */
+    public static function getProfileImage(): string
+{
+    $user = auth()->user();
+
+    if (self::showDosen()) {
+        if ($user->dosen->gambar) {
+            return asset($user->dosen->gambar);
+        } else {
+            return asset('assets/images/profile/user-1.jpg');
+        }
+    }
+
+    if (self::showKaprodi()) {
+        if ($user->gambar) {
+            return asset($user->gambar);
+        } else {
+            return asset('assets/images/profile/user-1.jpg');
+        }
+    }
+
+    if (self::showMahasiswa()) {
+        if ($user->mahasiswa->gambar) {
+            return asset($user->mahasiswa->gambar);
+        } else {
+            return asset('assets/images/profile/user-1.jpg');
+        }
+    }
+
+    // Default image for other roles or if user doesn't have specific profile images
+    if ($user->gambar) {
+        return asset($user->gambar);
+    } else {
+        return asset('assets/images/profile/user-1.jpg');
+    }
+}
+
 }

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('user')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });
