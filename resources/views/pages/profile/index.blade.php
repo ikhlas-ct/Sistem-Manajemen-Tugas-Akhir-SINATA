@@ -271,8 +271,8 @@
                                         </div>
                                         <div class="col-6">
                                             <div class="mb-3">
-                                                <label for="nidn" class="form-label">NIM</label>
-                                                <input type="text" class="form-control" id="nim" name="nim" value="{{ old('nidn', $user->nim) }}">
+                                                <label for="nim" class="form-label">NIM</label>
+                                                <input type="text" class="form-control" id="nim" name="nim" value="{{ old('nim', $user->mahasiswa->nim) }}">
                                             </div>
                                         </div>
                                     </div>
