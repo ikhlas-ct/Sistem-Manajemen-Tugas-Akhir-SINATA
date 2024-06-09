@@ -42,7 +42,7 @@ class FiturHelper
     public static function getProfileImage(): string
 {
     $user = auth()->user();
-
+    
     if (self::showDosen()) {
         if ($user->dosen->gambar) {
             return asset($user->dosen->gambar);
@@ -52,8 +52,8 @@ class FiturHelper
     }
 
     if (self::showKaprodi()) {
-        if ($user->gambar) {
-            return asset($user->gambar);
+        if ($user->prodi->gambar) {
+            return asset($user->prodi->gambar);
         } else {
             return asset('assets/images/profile/user-1.jpg');
         }

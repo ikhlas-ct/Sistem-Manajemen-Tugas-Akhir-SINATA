@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AlertHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dosen;
@@ -72,8 +73,8 @@ class DosenController extends Controller
         // Simpan perubahan
         $dosen->save();
     
-        // Redirect dengan pesan sukses
-        return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui.');
+        AlertHelper::alertSuccess('Anda telah berhasil mengupdate profil', 'Selamat!', 2000);
+        return redirect()->route('profile');
     }
 
     
@@ -124,8 +125,8 @@ public function updatePassword(Request $request)
             $user->save();
         }
     }
-
-    return redirect()->back()->with('success', 'Username dan password berhasil diperbarui');
+    AlertHelper::alertSuccess('Anda telah berhasil mengupdate username dan passowrd', 'Selamat!', 2000);
+    return redirect()->back();
 }
         
     
