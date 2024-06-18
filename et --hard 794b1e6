@@ -1,0 +1,58 @@
+* [33md53cf58[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m pembuatan admin ,user,fakultas
+* [33m682be74[m Memperbaiki sidebar yang  conflict dengan mas ihklas
+* [33mf1618c6[m[33m ([m[1;31morigin/pilih-dosen[m[33m)[m fix migration dan complict sidebar
+* [33mbc81752[m fix complict sidebar
+* [33m57bf7ae[m fix error migration
+*   [33m9ebfeca[m fixe complict
+[32m|[m[33m\[m  
+[32m|[m * [33mdd85455[m pembuatan user admin dan perbaikan sidebar masing-masing role
+* [33m|[m [33m0cd3816[m fitur kaprodi memilihkan pembimbing
+* [33m|[m [33m3dbc150[m Checkout dev
+* [33m|[m [33m4669854[m fix merge
+[34m|[m[33m\[m[33m|[m 
+[34m|[m * [33md1fedb6[m perubahan migration
+* [35m|[m [33mabedc36[m membuat data table
+[36m|[m[35m\[m[35m|[m 
+[36m|[m * [33m95aee3b[m merapikan tampilan judultugasakhir
+[36m|[m * [33m7d2423d[m Pembuatan sidebar pembimbing dan judul TA
+* [1;31m|[m [33m3188d56[m membuat route tugas akhir
+[1;31m|[m[1;31m/[m  
+* [33m794b1e6[m pembuatan database dan perbaikan
+* [33m9786f82[m perbaikan default image jika user tidak ada gambar
+* [33m2b892be[m update profile mahasiswa dan kaprodi
+* [33m069bdac[m Memperbaiki index
+* [33m0a64cc9[m Done profile mahasiswa dan prodi
+*   [33m1172d72[m mengatasi error
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m5262d3a[m Penambahan Dashboard Dosen dan profil
+[1;32m|[m * [33m045d407[m Pembuatan profil dosen dan biodata
+* [1;33m|[m [33m11a5d29[m Fitur Update Profile Mahasiswa dan Prodi done
+[1;33m|[m[1;33m/[m  
+*   [33meeacce1[m Masih error di Profile Mahasiswa
+[1;34m|[m[1;35m\[m  
+[1;34m|[m *   [33m1869e9f[m Merge pull request #1 from ikhlas-ct/dev
+[1;34m|[m [1;36m|[m[31m\[m  
+[1;34m|[m [1;36m|[m *   [33md006b4d[m[33m ([m[1;31morigin/dev[m[33m)[m Merge branch 'main' into dev
+[1;34m|[m [1;36m|[m [32m|[m[1;36m\[m  
+[1;34m|[m [1;36m|[m [32m|[m[1;36m/[m  
+[1;34m|[m [1;36m|[m[1;36m/[m[32m|[m   
+[1;34m|[m [1;36m|[m * [33ma222ca8[m Membuat fitur profile bagian kaprodi dan memgganti logo
+* [1;36m|[m [33m|[m [33m99900c2[m Biodata Mahasiswa
+[1;36m|[m[1;36m/[m [33m/[m  
+* [33m/[m [33me430bbd[m Halaman Mahasiswa
+[33m|[m[33m/[m  
+* [33me0b452f[m Mengahpus view sebelumnya
+* [33m0ea3636[m templating done
+*   [33ma4c8e34[m Menyelesaikan proses merge dengan branch origin/main
+[34m|[m[35m\[m  
+[34m|[m * [33md8b3a86[m Kaprodi Dashboard
+* [35m|[m [33m218d0aa[m pembuatan dashboard dan profil dosen
+* [35m|[m [33mfd6cb40[m perbaikan midleware
+[35m|[m[35m/[m  
+* [33mce7cbec[m Dashboard Redirect
+* [33mfed9a0c[m Penambahan Midleware berdasarkan role dan auth
+* [33mc72d675[m untuk user dosen dan database dummy
+* [33ma7ca387[m Penambahan Username based Role
+* [33mf8a21ca[m Membuat FE Halaman Mahasiswa yaitu dashboard dan konsultasi
+* [33m6c32977[m Penambahan Database
+* [33m264867d[m Initial commit

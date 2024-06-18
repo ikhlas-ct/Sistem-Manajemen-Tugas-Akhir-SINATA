@@ -11,6 +11,11 @@
                             <img src="{{asset('assets/images/logos/login_logo.png')}}" alt="Logo" class="img-fluid" style="width: 300px; margin-top: -50px; margin-bottom: -50px">
                             <p class="text-center mb-3">Welcome back! 👋</p>
                             <h4 class="text-center mb-4">Login to your account</h4>
+                            @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                             <form method="POST" action="{{ route('login.post') }}">
                                 @csrf
                                 <div class="mb-3">

@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use App\Models\DosenPembimbing;
+use App\Models\Dosen;
+
 
 class KaprodiController extends Controller
 {
@@ -97,4 +100,111 @@ class KaprodiController extends Controller
         AlertHelper::alertSuccess('Anda telah berhasil mengupdate password', 'Selamat!', 2000);
         return redirect()->back();
     }
+
+    // CRUD Pembimbing
+
+
+
+    public function Pembimbing_dashboard()
+    {
+        // Ambil data dosen pembimbing
+        $dosenPembimbings = DosenPembimbing::all(); // Sesuaikan query ini dengan kebutuhan Anda
+    
+        // Hitung total dosen pembimbing
+        $totalDosenPembimbing = count($dosenPembimbings);
+    
+        // Ambil data dosen
+        $dosens = Dosen::all(); // Menggunakan model Dosen yang telah di-import
+    
+        return view('pages.Prodi.pemilihanpembimbing', [
+            'dosenPembimbings' => $dosenPembimbings,
+            'totalDosenPembimbing' => $totalDosenPembimbing,
+            'dosens' => $dosens,
+        ]);
+    }
+    
+    public function store_Pembimbing(Request $request)
+    {
+        // Validasi input dari form
+        $request->validate([
+            'dosen_id' => [
+                'required',
+                'exists:dosen,id',
+                function ($attribute, $value, $fail) {
+                    // Pastikan dosen tidak memiliki lebih dari satu entri untuk setiap jenis pembimbing
+                    $countDosbing1 = DosenPembimbing::where('dosen_id', $value)->where('jenis_dosbing', 'pembimbing 1')->count();
+                    $countDosbing2 = DosenPembimbing::where('dosen_id', $value)->where('jenis_dosbing', 'pembimbing 2')->count();
+    
+                    if ($countDosbing1 > 0 || $countDosbing2 > 0) {
+                        $fail('Dosen ini sudah menjadi pembimbing 1 atau pembimbing 2.');
+                    }
+                },
+            ],
+            'jenis_dosbing' => 'required|in:pembimbing 1,pembimbing 2',
+        ]);
+    
+        // Proses penyimpanan data baru
+        DosenPembimbing::create([
+            'dosen_id' => $request->dosen_id,
+            'jenis_dosbing' => $request->jenis_dosbing,
+        ]);
+    
+        return redirect()->route('Pembimbing.dashboard')->with('success', 'Dosen Pembimbing berhasil ditambahkan.');
+    }
+    
+    public function edit_pembimbing($id)
+    {
+        // Ambil data dosen pembimbing berdasarkan ID
+        $dosenPembimbing = DosenPembimbing::findOrFail($id);
+
+        // Ambil semua data dosens untuk dropdown
+        $dosens = Dosen::all();
+
+        return view('pages.Prodi.edit_pembimbing', [
+            'dosenPembimbing' => $dosenPembimbing,
+            'dosens' => $dosens,
+        ]);
+    }
+    
+
+public function update_Pembimbing(Request $request, $id)
+{
+    // Validasi data input
+    $validatedData = $request->validate([
+        'jenis_dosbing' => 'required|in:pembimbing 1,pembimbing 2',
+    ]);
+
+    // Dapatkan data dosen pembimbing berdasarkan ID
+    $dosenPembimbing = DosenPembimbing::findOrFail($id);
+    // dd($dosenPembimbing);
+
+    // Lakukan update jenis_dosbing
+    $dosenPembimbing->jenis_dosbing = $request->jenis_dosbing; // pastikan jenis_dosbing diisi dengan value dari request
+    $dosenPembimbing->save(); // simpan perubahan
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('Pembimbing.dashboard')->with('success', 'Data dosen pembimbing berhasil diperbarui');
+}
+
+
+    public function destroy_Pembimbing($id)
+    {
+        // Hapus data berdasarkan id
+        $dosenPembimbing = DosenPembimbing::findOrFail($id);
+        $dosenPembimbing->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('Pembimbing.dashboard')->with('success', 'Data dosen pembimbing berhasil dihapus');
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -19,8 +19,8 @@
                             <div class="col-4 d-flex align-items-center">
                                 <div class="position-relative d-inline-block">
                                     <img id="current-profile-image" class="img-fluid img-thumbnail rounded-5"
-                                    src="{{$user->prodi->gambar ? asset($user->prodi->gambar) : asset('assets/images/profile/user-1.jpg') }}"
-                                    alt="Profile Image">
+                                        src="{{ $user->prodi->gambar ? asset($user->prodi->gambar) : asset('assets/images/profile/user-1.jpg') }}"
+                                        alt="Profile Image">
                                     <span class="position-absolute top-0 end-0 p-4">
                                         <div id="profile-image" class="bg-white p-2 rounded-2 cursor-pointer">
                                             <i class="fas fa-camera fs-5"></i>
@@ -50,10 +50,11 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="mb-3">
-                                                <label for="departemen" class="form-label">Departemen</label>
+                                                <label for="departement" class="form-label">No HP</label>
                                                 <input type="text" class="form-control" id="departemen" name="departemen"
                                                     value="{{ old('departemen', $user->prodi->departemen) }}">
                                             </div>
+                                         
                                         </div>
                                         <div class="col-6">
                                             <div class="mb-3">
@@ -62,12 +63,13 @@
                                                     value="{{ old('no_hp', $user->prodi->no_hp) }}">
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="mb-3">
-                                                <label for="alamat" class="form-label">Alamat</label>
-                                                <textarea class="form-control" id="alamat" name="alamat" rows="2">{{ old('alamat', $user->prodi->alamat) }}</textarea>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="mb-3">
+                                                    <label for="alamat" class="form-label">Alamat</label>
+                                                    <textarea class="form-control" id="alamat" name="alamat" rows="2">{{ Auth::user()->prodi->alamat }}</textarea>
+                                                </div>
+            
                                             </div>
                                         </div>
                                     </div>
@@ -125,13 +127,15 @@
                     </form>
                 </div>
             @endif
+
+
             @if (FiturHelper::showDosen())
                 <div class="card-body">
                     @if (session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
-                @endif
+                    @endif
                     <form action="{{ route('dosen.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -266,6 +270,134 @@
                     </div>
                 </div>
             @endif
+
+            @if (FiturHelper::showAdmin())
+            <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+            @endif
+                <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="row">
+                        <div class="col-4 d-flex align-items-center">
+                            <div class="position-relative d-inline-block">
+                                <img id="current-profile-image" class="img-fluid img-thumbnail rounded-5"
+                                    src="{{ Auth::user()->admin->gambar ? asset(Auth::user()->admin->gambar) : asset('assets/images/profile/user-1.jpg') }}"
+                                    alt="Current Profile Image">
+                                <span class="position-absolute top-0 end-0 p-4">
+                                    <div id="profile-image" class="bg-white p-2 rounded-2 cursor-pointer">
+                                        <i class="fas fa-camera fs-5"></i>
+                                    </div>
+                                </span>
+                            </div>
+                            <input type="file" class="d-none" name="gambar" id="gambar">
+                        </div>
+                        <div class="col-8">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="nama" class="form-label">Nama</label>
+                                        <input type="text" class="form-control" id="nama" name="nama"
+                                            value="{{ Auth::user()->admin->nama }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="no_hp" class="form-label">No HP</label>
+                                        <input type="text" class="form-control" id="no_hp" name="no_hp"
+                                            value="{{ Auth::user()->admin->no_hp }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label for="alamat" class="form-label">Alamat</label>
+                                        <textarea class="form-control" id="alamat" name="alamat" rows="2">{{ Auth::user()->admin->alamat }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Ganti Password dan Username</h2>
+                        @if (session('password'))
+                            <div class="alert alert-success">
+                                {{ session('password') }}
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <form action="{{ route('admin.update.password') }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                    id="username" name="username"
+                                    value="{{ old('username', Auth::user()->username) }}">
+                                @error('username')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password_lama" class="form-label">Password Lama</label>
+                                <input type="password"
+                                    class="form-control @error('password_lama') is-invalid @enderror"
+                                    id="password_lama" name="password_lama">
+                                @error('password_lama')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input id="password" type="password" class="form-control" name="password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password-confirm" class="form-label">Confirm Password</label>
+                                <input id="password-confirm" type="password" class="form-control"
+                                    name="password_confirmation" required>
+                                <div id="password-error" class="text-danger mt-2" style="display:none;">Passwords do
+                                    not match!</div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary mt-3">Simpan Perubahan</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        @endif
+
+
+
+
             @if (FiturHelper::showMahasiswa())
                 <div class="card-body">
                     <form action="{{ route('profileUpdate') }}" method="POST" enctype="multipart/form-data">
@@ -275,7 +407,8 @@
                             <div class="col-4 d-flex align-items-center">
                                 <div class="position-relative d-inline-block">
                                     <img id="current-profile-image" class="img-fluid img-thumbnail rounded-5"
-                                        src="{{$user->mahasiswa->gambar ? asset($user->mahasiswa->gambar) : asset('assets/images/profile/user-1.jpg') }}" alt="Profile Image">
+                                        src="{{ $user->mahasiswa->gambar ? asset($user->mahasiswa->gambar) : asset('assets/images/profile/user-1.jpg') }}"
+                                        alt="Profile Image">
                                     <span class="position-absolute top-0 end-0 p-4">
                                         <div id="profile-image" class="bg-white p-2 rounded-2 cursor-pointer">
                                             <i class="fas fa-camera fs-5"></i>

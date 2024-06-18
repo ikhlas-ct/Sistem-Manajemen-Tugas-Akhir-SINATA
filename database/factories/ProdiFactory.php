@@ -21,6 +21,7 @@ class ProdiFactory extends Factory
         return [
             'user_id' => $user->id,
                 'nidn' => $this->faker->numerify('##########'), // Misalnya menggunakan faker untuk NIDN
+                'nama' => $this->faker->name() ,// Misalnya menggunakan faker untuk NIDN
                 'gambar' => 'https://via.placeholder.com/200x200.png', // Ganti dengan gambar profil yang sesuai
                 'departemen' => $this->faker->randomElement(['Teknik Informatika', 'Sistem Informasi', 'Teknik Elektro']),
                 'no_hp' => $this->faker->phoneNumber,

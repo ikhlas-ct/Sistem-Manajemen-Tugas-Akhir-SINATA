@@ -6,6 +6,8 @@ use App\Helpers\AlertHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Dosen;
+use App\Models\DosenPembimbing;
+use App\Models\JudulTugasAkhir;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -128,7 +130,31 @@ public function updatePassword(Request $request)
     AlertHelper::alertSuccess('Anda telah berhasil mengupdate username dan passowrd', 'Selamat!', 2000);
     return redirect()->back();
 }
-        
+
+
+public function daftar_judul()
+{
+    $user = Auth::user(); // Ambil user yang sedang login (diasumsikan menggunakan authentication Laravel)
+    $dosenPembimbing = DosenPembimbing::where('dosen_id', $user->id)->first(); // Ambil data dosen pembimbing yang login
+    $judulTugasAkhirs = JudulTugasAkhir::whereHas('mahasiswaBimbingan', function ($query) use ($dosenPembimbing) {
+        $query->where('dosen_pembimbing_id', $dosenPembimbing->id);
+    })->get();
+
+    return view('pages.dosen.pengajuanjudul', compact('judulTugasAkhirs'));
+}
+
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:diterima,ditolak',
+    ]);
+
+    $judul = JudulTugasAkhir::findOrFail($id);
+    $judul->status = $request->status;
+    $judul->save();
+
+    return back()->with('success', 'Status judul tugas akhir berhasil diperbarui.');
+}
     
     
 
