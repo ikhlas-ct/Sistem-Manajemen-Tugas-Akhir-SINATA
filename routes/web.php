@@ -81,6 +81,8 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::put('/dosen/update/password', [DosenController::class, 'updatepassword'])->name('dosen.update.password');
 
     Route::get('/dosen-pembimbing/students', [DosenController::class, 'showStudents'])->name('dosen_pembimbing.students');
+    Route::get('/mahasiswa/{id}', [DosenController::class, 'bimbinganshow'])->name('mahasiswa.detail');
+
 
     Route::get('/dosen/judul-tugas-akhir', [DosenController::class, 'showSubmittedTitles'])->name('dosen_pengajuan_judul');
     Route::post('/dosen/judul-tugas-akhir/approve/{id}', [DosenController::class, 'approveTitle'])->name('dosen.judul_tugas_akhir.approve');
@@ -113,6 +115,8 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     // Input Logbook
     Route::get('/Logbook', [MahasiswaController::class, 'input_logbook'])->name('mahasiswa_input_logbook');
     Route::post('logbooks', [MahasiswaController::class, 'logbook_store'])->name('logbook.store');
+    Route::delete('/logbook/{id}', [MahasiswaController::class, 'destroy_logbook'])->name('logbook.destroy');
+
     Route::get('/logbook/print', [MahasiswaController::class, 'print_logbook'])->name('logbook.print');
 
     Route::get('/konsultasi_bimbingan', [MahasiswaController::class, 'input_bimbingan'])->name('mahasiswa_input_bimbingan');

@@ -48,14 +48,19 @@
                         @endif
                     </td>
                     <td>
-                        <button type="button" class="btn btn-primary respond-button" data-id="{{ $konsultasi->id }}">Respon</button>
+                        <button type="button" class="btn btn-primary respond-button"
+                            data-id="{{ $konsultasi->id }}"
+                            data-status="{{ $konsultasi->status }}"
+                            data-pembahasan="{{ $konsultasi->Pembahasan }}">
+                            Respon
+                        </button>
                     </td>
+                    
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <!-- Modal -->
     <div class="modal fade" id="respondModal" tabindex="-1" aria-labelledby="respondModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -77,8 +82,9 @@
                         </div>
                         <div class="form-group">
                             <label for="Pembahasan">Pembahasan</label>
-                            <textarea name="Pembahasan" id="Pembahasan" class="form-control"></textarea>
+                            <textarea name="Pembahasan" id="Pembahasan" class="form-control" rows="20" style="resize: vertical;"></textarea>
                         </div>
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -88,9 +94,9 @@
             </div>
         </div>
     </div>
+    
 </div>
 @endsection
-
 @section('scripts')
 <script>
     $(document).ready(function() {
@@ -112,12 +118,19 @@
 
         $('.respond-button').on('click', function() {
             var konsultasiId = $(this).data('id');
+            var status = $(this).data('status');
+            var pembahasan = $(this).data('pembahasan');
+            
             $('#respondForm').attr('action', '/dosen/konsultasi/respond/' + konsultasiId);
+            $('#status').val(status);
+            $('#Pembahasan').val(pembahasan);
+            
             $('#respondModal').modal('show');
         });
     });
 </script>
 @endsection
+
 
 @section('styles')
 <style>
@@ -131,6 +144,12 @@
     .short-text:hover {
         cursor: pointer;
     }
+    .modal-content {
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
 </style>
-
 @endsection
+
+

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->int('bab');
             $table->text('deskripsi');
             $table->string('file_path');
-            $table->enum('status', ['Diterima', 'Direvisi', 'Diproses'])->default('Direvisi');
+            $table->enum('status', ['Diterima', 'Direvisi', 'Diproses'])->default('Diproses');
             $table->timestamps();
 
             $table->foreign('mahasiswa_bimbingan_id')->references('id')->on('mahasiswa_bimbingans')->onDelete('cascade');

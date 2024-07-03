@@ -63,6 +63,15 @@
             background-color: #fff;
             padding: 10px;
         }
+        .app-header {
+            background-color: blue;
+            color:white;
+        }
+        .app-header .nav-link,
+        .app-header .profile-name {
+            color: white;
+        }
+        
         
     </style>
 </head>

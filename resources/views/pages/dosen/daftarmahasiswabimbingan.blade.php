@@ -18,7 +18,7 @@
                 <th>No HP/WA</th>
                 <th>Judul Tugas Akhir</th>
                 <th>BAB</th>
-                
+                <th>Aksi</th> <!-- Kolom untuk aksi -->
             </tr>
         </thead>
         <tbody>
@@ -35,6 +35,11 @@
                     <td>{{ $mahasiswaBimbingan->mahasiswa->no_hp }}</td>
                     <td>{{ $judulTugasAkhir->judul ?? 'Belum Ada Judul Yang Diterima' }}</td>
                     <td>{{ $logbook->bab ?? 'Belum Ada' }}</td>
+                    <td>
+                        <a href="{{ route('mahasiswa.detail', $mahasiswaBimbingan->id) }}" class="btn btn-primary">
+                            Lihat Detail
+                        </a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

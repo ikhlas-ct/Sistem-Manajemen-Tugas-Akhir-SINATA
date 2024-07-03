@@ -45,7 +45,7 @@
             <tr>
                 <th class="text-center">NO</th>
                 <th class="text-center">Tanggal</th>
-                <th class="text-center">Mahasiswa </th>
+                <th class="text-center">Pembimbing </th>
                 <th class="text-center">Topik </th>
                 <th class="text-center">Pembahasan</th>
                 <th class="text-center">Status</th>
@@ -55,9 +55,9 @@
         <tbody>
             @foreach ($konsultasis as $konsultasi)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $konsultasi->tanggal }}</td>
-                    <td>{{ $konsultasi->mahasiswaBimbingan->mahasiswa->nama }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td class="text-center">{{ $konsultasi->tanggal }}</td>
+                    <td class="text-center">{{ $konsultasi->mahasiswaBimbingan->dosenPembimbing->dosen->nama }}</td>
                     <td>{{ $konsultasi->topik }}</td>
                     <td>
                         <span class="short-text" title="{{ $konsultasi->Pembahasan }}">
@@ -65,7 +65,7 @@
                         </span>
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         @if($konsultasi->status == 'Ditolak')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($konsultasi->status) }}</span>
                         @elseif($konsultasi->status == 'Diproses')
@@ -74,7 +74,7 @@
                             <span class="badge bg-success badge-pill">{{ ucfirst($konsultasi->status) }}</span>
                         @endif
                     </td>
-                    <td>
+                    <td class="text-center">
                         @if($konsultasi->status == 'Diproses')
                             <form action="{{ route('konsultasi.destroy', $konsultasi->id) }}" method="POST">
                                 @csrf

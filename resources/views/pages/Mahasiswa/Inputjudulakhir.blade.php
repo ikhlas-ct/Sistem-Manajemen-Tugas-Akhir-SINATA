@@ -13,29 +13,28 @@
     @endif
 
     @if ($errors->has('status'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ $errors->first('status') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ $errors->first('status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-  <!-- Peringatan Status -->
-  @foreach($judulTugasAkhirs as $judul)
-  @if($judul->status == 'diproses')
-      <div class="alert alert-info mt-5 border-3 border-primary" role="alert">
-          <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
-          <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
-          🔄 <span style="color: red">Judul tugas akhir anda sedang diproses hanya saat diproses anda bisa menghapus atau merubah judul tugas akhir anda</span>. Hubungi dosen pembimbing Anda untuk memintak validasi.
-      </div>
-  @elseif($judul->status == 'diterima')
-      <div class="alert alert-success mt-5 border-4 border-success" role="alert">
-          <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
-          <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
-          ✅ Judul Tugas Akhir Anda sudah diterima. Untuk merubah atau menghapus, hubungi dosen pembimbing Anda.
-      </div>
-  @endif
-@endforeach
-
+    <!-- Peringatan Status -->
+    @foreach($judulTugasAkhirs as $judul)
+        @if($judul->status == 'diproses')
+            <div class="alert alert-info mt-5 border-3 border-primary" role="alert">
+                <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+                <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
+                🔄 <span style="color: red">Judul tugas akhir anda sedang diproses hanya saat diproses anda bisa menghapus atau merubah judul tugas akhir anda</span>. Hubungi dosen pembimbing Anda untuk memintak validasi.
+            </div>
+        @elseif($judul->status == 'diterima')
+            <div class="alert alert-success mt-5 border-4 border-success" role="alert">
+                <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+                <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
+                ✅ Judul Tugas Akhir Anda sudah diterima. Untuk merubah atau menghapus judul anda, hubungi dosen pembimbing Anda.
+            </div>
+        @endif
+    @endforeach
 
     <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createJudulModal">
         <i class="fas fa-plus"></i> Tambah Judul Tugas Akhir
@@ -45,45 +44,109 @@
         <thead>
             <tr>
                 <th class="text-center" >NO</th>
-                <th class="text-center">Mahasiswa Bimbingan</th>
                 <th class="text-center">Judul</th>
                 <th class="text-center">Deskripsi</th>
                 <th class="text-center">File</th>
                 <th class="text-center">Status</th>
+                <th class="text-center">Saran</th>
                 <th class="text-center">Aksi</th>
-
             </tr>
         </thead>
         <tbody>
-            @foreach ($judulTugasAkhirs as $judul)
-                <tr class="">
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $judul->mahasiswaBimbingan->mahasiswa->nama }}</td>
-                    <td>{{ $judul->judul }}</td>
-                    <td>{{ $judul->deskripsi }}</td>
-                    <td><a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">Lihat File</a></td>
-            
-                    <td>
-                        @if($judul->status == 'ditolak')
-                            <span class="badge bg-danger badge-pill">{{ ucfirst($judul->status) }}</span>
-                        @elseif($judul->status == 'diproses')
-                            <span class="badge bg-secondary badge-pill">{{ ucfirst($judul->status) }}</span>
-                        @elseif($judul->status == 'diterima')
+            @php
+                $judulDiterima = $judulTugasAkhirs->filter(function($judul) {
+                    return $judul->status == 'diterima';
+                });
+            @endphp
+
+            @if($judulDiterima->isNotEmpty())
+                @foreach ($judulDiterima as $judul)
+                    <tr>
+                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $judul->judul }}</td>
+                        <td>{{ $judul->deskripsi }}</td>
+                        <td class="text-center">
+                            <a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">
+                                <i class="fas fa-file fa-2x text-success"></i>
+                            </a>
+                        </td>
+                        <td>
                             <span class="badge bg-success badge-pill">{{ ucfirst($judul->status) }}</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($judul->status == 'diproses')
-                            <form action="{{ route('judul_tugas_akhir_destroy', $judul->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+                        </td>
+                        <td>{{ $judul->Saran ?? '-'}}</td>
+                        <td>-</td>
+                    </tr>
+                @endforeach
+            @else
+                @foreach ($judulTugasAkhirs as $judul)
+                    <tr>
+                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $judul->judul }}</td>
+                        <td>{{ $judul->deskripsi }}</td>
+                        <td class="text-center">
+                            <a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">
+                                <i class="fas fa-file fa-2x text-success"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            @if($judul->status == 'ditolak')
+                                <span class="badge bg-danger badge-pill">{{ ucfirst($judul->status) }}</span>
+                            @elseif($judul->status == 'diproses')
+                                <span class="badge bg-secondary badge-pill">{{ ucfirst($judul->status) }}</span>
+                            @endif
+                        </td>
+                        <td>{{ $judul->saran ?? '-' }}</td>
+                        <td class="text-center">
+                            @if($judul->status == 'diproses')
+                                <form action="{{ route('judul_tugas_akhir_destroy', $judul->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
         </tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </table>
 </div>
 

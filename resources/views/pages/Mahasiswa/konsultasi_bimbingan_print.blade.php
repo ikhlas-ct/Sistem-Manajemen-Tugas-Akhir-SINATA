@@ -64,7 +64,7 @@
             </div>
             <div class="header-content">
                 <h3>KEMENTERIAN PENDIDIKAN DAN KEBUDAYAAN<br>UNIVERSITAS SINATA<br>FAKULTAS KEGURUAN DAN ILMU PENDIDIKAN</h3>
-                <p>Jalan Raya Palembang - Prabumulih Indralaya, Ogan Ilir 30662<br>Telp: (0711) 580058, 580085 Fax: (0711) 580058<br>Laman: www.fkip.unsri.ac.id, email: support@fkip.unsri.ac.id</p>
+                <p>Jalan Khatib Sulaiman - Lolong Belanti, Kota Padang 25173<br>Telp: (0711) 580058, 580085 Fax: (0711) 580058<br>Laman: https://SINATA.ac.id/, email: support@SINATA.ac.id</p>
             </div>
         </div>
         <hr >

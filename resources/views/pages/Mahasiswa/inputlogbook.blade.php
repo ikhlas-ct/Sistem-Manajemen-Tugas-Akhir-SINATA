@@ -21,12 +21,9 @@
         </div>
     @endif
 
-
     <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createLogbookModal">
         <i class="fas fa-plus"></i> Tambah Logbook
     </button>
-      
-
 
     <table id="logbookTable" class="table table-bordered">
         <thead>
@@ -38,23 +35,25 @@
                 <th class="text-center">Deskripsi</th>
                 <th class="text-center">File</th>
                 <th class="text-center">Status</th>
+                <th class="text-center">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($logbooks as $logbook)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $logbook->mahasiswaBimbingan->mahasiswa->nama }}</td>
-                    <td>{{ $logbook->bab }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td class="text-center">{{ $logbook->mahasiswaBimbingan->mahasiswa->nama }}</td>
+                    <td class="text-center">{{ $logbook->bab }}</td>
                     <td>{{ $logbook->judul_tugas_akhir }}</td>
                     <td>{{ $logbook->deskripsi }}</td>
 
-                    <td>
-                        <a href="{{ asset('uploads/logbook/' .$logbook->file_path) }}" target="_blank">Lihat File</a>                    
+                    <td class="text-center">
+                        <a href="{{ asset('uploads/logbook/' . $logbook->file_path) }}" target="_blank">      
+                            <i class="fas fa-file fa-2x text-success"></i>
+                        </a>                    
                     </td>
 
-
-                    <td>
+                    <td class="text-center">
                         @if ($logbook->status == 'Direvisi')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($logbook->status) }}</span>
                         @elseif ($logbook->status == 'Diproses')
@@ -64,6 +63,17 @@
                         @endif
                     </td>
 
+                    <td class="text-center">
+                        @if($logbook->status == 'Diproses')
+                            <form action="{{ route('logbook.destroy', $logbook->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        @else
+                            <span>-</span>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -101,20 +111,16 @@
                         <label for="file" class="form-label">File</label>
                         <input type="file" class="form-control" id="file" name="file" required>
                         <small class="fs-3">Pastikan Data yang akan kamu inputkan benar dan jelas</small>
-
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
-                </div>
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('scripts')
-
 <script>
     $(document).ready(function() {
         $('#logbookTable').DataTable({

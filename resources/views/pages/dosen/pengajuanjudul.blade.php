@@ -16,24 +16,29 @@
     <table class="table" id="judulTugasAkhirTable">
         <thead>
             <tr>
-                <th>No</th>
-                <th>Nama Mahasiswa</th>
-                <th>Judul</th>
-                <th>Deskripsi</th>
-                <th>File</th>
-                <th>Aksi</th>
+                <th class="text-center">No</th>
+                <th class="text-center">Nama Mahasiswa</th>
+                <th class="text-center">Judul</th>
+                <th class="text-center">Deskripsi</th>
+                <th class="text-center">File</th>
+                <th class="text-center">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach($judulTugasAkhirs as $index => $judul)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $judul->mahasiswaBimbingan->mahasiswa->nama }}</td>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $judul->mahasiswaBimbingan->mahasiswa->nama }}</td>
                     <td>{{ $judul->judul }}</td>
                     <td>{{ $judul->deskripsi }}</td>
-                    <td><a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">Lihat File</a></td>
-
-                    <td>
+                    <td class="text-center">
+                        <a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">
+                            <i class="fas fa-file fa-2x text-success"></i>
+                        </a>
+                    </td>
+                    
+                    
+                    <td class="text-center">
                         <form action="{{ route('dosen.judul_tugas_akhir.approve', $judul->id) }}" method="POST" class="approval-form" style="display:inline;">
                             @csrf
                             <button type="button" class="btn btn-success approval-button">
@@ -69,7 +74,6 @@
                 },
                 "emptyTable": "Tidak ada data di dalam tabel",
                 "zeroRecords": "Tidak ditemukan data yang sesuai"
-
             },
             "dom": '<"top"lf>rt<"bottom"ip><"clear">'
         });
@@ -91,4 +95,12 @@
         });
     });
 </script>
+@endsection
+
+@section('styles')
+<style>
+    .text-center th {
+        text-align: center;
+    }
+</style>
 @endsection

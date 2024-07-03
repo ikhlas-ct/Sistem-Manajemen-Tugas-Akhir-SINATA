@@ -158,6 +158,38 @@ public function showStudents()
     return view('pages.dosen.daftarmahasiswabimbingan', compact('dosenPembimbing', 'mahasiswaBimbingans', 'judulTugasAkhirs', 'logbooks'));
 }
 
+public function bimbinganshow($id)
+{
+    // Mendapatkan ID dosen pembimbing yang sedang login
+    $dosenPembimbingId = Auth::user()->dosen->id;
+
+    // Mengambil data dosen pembimbing
+    $dosenPembimbing = DosenPembimbing::findOrFail($dosenPembimbingId);
+
+    // Mengambil mahasiswa bimbingan berdasarkan ID
+    $mahasiswaBimbingan = MahasiswaBimbingan::findOrFail($id);
+
+    // Pastikan mahasiswa ini benar-benar dibimbing oleh dosen yang sedang login
+    if ($mahasiswaBimbingan->dosen_pembimbing_id !== $dosenPembimbingId) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Mengambil judul tugas akhir yang diterima untuk mahasiswa ini
+    $judulTugasAkhir = JudulTugasAkhir::where('mahasiswa_bimbingan_id', $id)
+        ->where('status', 'diterima')
+        ->first();
+
+    // Mengambil logbook terbaru untuk mahasiswa ini
+    $logbook = Logbook::where('mahasiswa_bimbingan_id', $id)
+        ->latest()
+        ->first();
+
+    // Mengirim data ke view, pastikan judulTugasAkhir tidak null sebelum dikirimkan
+    return view('pages.dosen.mahasiswadetail', compact('mahasiswaBimbingan', 'judulTugasAkhir', 'logbook'));
+}
+
+
+
 
 public function showSubmittedTitles()
 {

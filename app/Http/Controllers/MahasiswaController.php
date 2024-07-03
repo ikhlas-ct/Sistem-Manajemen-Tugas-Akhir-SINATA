@@ -202,12 +202,12 @@ public function store_judul(Request $request)
 
     // Check if any judul tugas akhir with 'diterima' status exists for the specified mahasiswa_bimbingan_id
     $existingJudul = JudulTugasAkhir::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)
-                                    ->where('status', 'diterima')
+                                    ->where('status', ['diproses','diterima'])
                                     ->exists();
 
     // If there's an existing 'diterima' judul, prevent new entry
     if ($existingJudul) {
-        return redirect()->route('mahasiswa_input_judul')->withErrors(['status' => 'Anda sudah memiliki judul tugas akhir yang diterima.']);
+        return redirect()->route('mahasiswa_input_judul')->withErrors(['status' => 'Anda sudah memiliki judul tugas akhir yang diproses atau diterima.']);
     }
 
     if ($request->hasFile('file_judul')) {
@@ -292,13 +292,11 @@ public function logbook_store(Request $request)
     $mahasiswaBimbinganId = $request->mahasiswa_bimbingan_id;
     $judulTugasAkhir = $request->judul_tugas_akhir;
 
-    // Mendapatkan bab terakhir yang diterima
     $lastAcceptedLogbook = Logbook::where('mahasiswa_bimbingan_id', $mahasiswaBimbinganId)
                                 ->where('status', 'Diterima')
                                 ->orderBy('bab', 'desc')
                                 ->first();
 
-    // Mendapatkan bab terakhir yang ditolak atau diproses
     $lastPendingOrRejectedLogbook = Logbook::where('mahasiswa_bimbingan_id', $mahasiswaBimbinganId)
                                 ->whereIn('status', ['Direvisi', 'Diproses'])
                                 ->orderBy('bab', 'desc')
@@ -347,15 +345,29 @@ public function logbook_store(Request $request)
     return redirect()->route('mahasiswa_input_logbook')->with('success', 'Logbook berhasil dibuat.');
 }
 
+public function destroy_logbook($id)
+    {
+        $logbook = Logbook::find($id);
 
-public function print_logbook()
-{
-    $logbooks = Logbook::where('status', 'Diterima')->get();
-    return view('pages.Mahasiswa.logbook_print', compact('logbooks'));
-}
+        if (!$logbook) {
+            return redirect()->back()->withErrors(['Logbook tidak ditemukan.']);
+        }
 
+        // Hanya bisa dihapus jika statusnya "Diproses"
+        if ($logbook->status != 'Diproses') {
+            return redirect()->back()->withErrors(['Logbook hanya bisa dihapus jika statusnya "Diproses".']);
+        }
 
+        // Hapus file terkait jika ada
+        if ($logbook->file_path && file_exists(public_path('uploads/logbook/' . $logbook->file_path))) {
+            unlink(public_path('uploads/logbook/' . $logbook->file_path));
+        }
 
+        // Hapus data logbook
+        $logbook->delete();
+
+        return redirect()->back()->with('success', 'Logbook berhasil dihapus.');
+    }
 
     public function input_bimbingan()
     {    $mahasiswaId = Auth::user()->mahasiswa->id; // Mendapatkan ID mahasiswa yang sedang login
