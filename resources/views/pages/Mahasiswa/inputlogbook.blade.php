@@ -55,7 +55,7 @@
 
 
                     <td>
-                        @if ($logbook->status == 'Ditolak')
+                        @if ($logbook->status == 'Direvisi')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($logbook->status) }}</span>
                         @elseif ($logbook->status == 'Diproses')
                             <span class="badge bg-secondary badge-pill">{{ ucfirst($logbook->status) }}</span>

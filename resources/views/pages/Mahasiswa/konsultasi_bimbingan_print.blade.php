@@ -1,7 +1,6 @@
-<!-- resources/views/pages/Mahasiswa/print_konsultasi.blade.php -->
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" >
+<head > 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="no-print">Print Konsultasi Bimbingan</title>
@@ -43,12 +42,12 @@
             text-align: left;
         }
         @media print {
-            .no-print {
-                display: none; 
-            }
-            .print-title {
-                display: none; 
-            }
+        .no-print {
+        display: none;
+          }
+         .print-title {
+        display: none;
+         }
         }
         hr {
             border: none; /* Menghapus border bawaan hr */
@@ -73,19 +72,19 @@
         <h2 style="text-align: center">Kartu Bimbingan Skripsi</h2>
         <div class="content" style="display: grid; grid-template-columns: 150px auto;">
             <p style="margin-bottom: 8px;">Nama Mahasiswa</p>
-            <p style="margin-bottom: 8px;">:{{ $mahasiswa->nama }}</p>
+            <p style="margin-bottom: 8px;">: {{ $mahasiswa->nama }}</p>
             
             <p style="margin-bottom: 8px;">NIM</p>
-            <p style="margin-bottom: 8px;">:{{ $mahasiswa->nim }}</p>
+            <p style="margin-bottom: 8px;">: {{ $mahasiswa->nim }}</p>
             
             <p style="margin-bottom: 8px;">Jurusan</p>
-            <p style="margin-bottom: 8px;">:{{ $mahasiswa->fakultas }}</p>
+            <p style="margin-bottom: 8px;">: {{ $mahasiswa->fakultas }}</p>
             
             <p style="margin-bottom: 8px;">Judul Proposal</p>
-            <p style="margin-bottom: 8px;">:{{ $judulTugasAkhir->judul }}</p>
+            <p style="margin-bottom: 8px;">: {{ $judulTugasAkhir ? $judulTugasAkhir->judul : "-" }}</p>
             
             <p style="margin-bottom: 8px;">Pembimbing</p>
-            <p style="margin-bottom: 8px;">:{{ $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nama }}</p>
+            <p style="margin-bottom: 8px;">: {{ $mahasiswaBimbingans->isNotEmpty() ? $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nama : 'Tidak ada pembimbing' }}</p>
         </div>
         
         <table class="table">
@@ -95,13 +94,13 @@
                     <th style="text-align: center;">Tanggal</th>
                     <th style="text-align: center;">Pokok Bahasan</th>
                     <th style="text-align: center;">Pembahasan</th>
-                    <th style="text-align: center;">Status</th> <!-- Using status as the signature of the supervisor -->
+                    <th style="text-align: center;">Status</th> <!-- Menggunakan status sebagai tanda tangan pembimbing -->
                 </tr>
             </thead>
             <tbody>
-                    @php
-                    use Carbon\Carbon;
-                    @endphp
+                @php
+                use Carbon\Carbon;
+                @endphp
                 @foreach($konsultasis as $key => $konsultasi)
                     @if ($konsultasi->status === 'Diterima')
                         <tr>

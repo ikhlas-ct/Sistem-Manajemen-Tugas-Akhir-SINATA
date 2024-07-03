@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('logbooks', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal');
             $table->unsignedBigInteger('mahasiswa_bimbingan_id');
-            $table->longText('Materi_Bimbingan')->default(1);
-            $table->enum('status', ['Diterima', 'Ditolak', 'Diproses'])->default('Diproses');
+            $table->string('judul_tugas_akhir');
+            $table->int('bab');
+            $table->text('deskripsi');
+            $table->string('file_path');
+            $table->enum('status', ['Diterima', 'Direvisi', 'Diproses'])->default('Direvisi');
             $table->timestamps();
 
             $table->foreign('mahasiswa_bimbingan_id')->references('id')->on('mahasiswa_bimbingans')->onDelete('cascade');

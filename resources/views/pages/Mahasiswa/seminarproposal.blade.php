@@ -5,21 +5,42 @@
 @section('content')
 <div class="container">
 
-        <!-- Display accepted proposal details -->
-   @if($acceptedProposal)
-    <div class="card mt-5">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Rincian Jadwal Seminar Proposal Tugas Akhir</h4>
-        </div>
-        <div class="card-body">
-            <p><strong>NIM:</strong> {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nim }}</p>
-            <p><strong>Nama:</strong> {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nama }}</p>
-            <p><strong>Judul:</strong> {{$judulTugasAkhir->judul}} </p>
-            <p><strong>Ruangan:</strong> {{ $acceptedProposal->ruangan->nama }}</p>
-            <p><strong>Tanggal:</strong> {{ $acceptedProposal->tanggal_waktu->format('d M Y') }}</p>
-            <p><strong>Waktu:</strong> {{ $acceptedProposal->tanggal_waktu->format('H:i') }}</p>
-            
-            <p><strong>Dosen Pembimbing</strong> {{ $acceptedProposal->tanggal_waktu->format('H:i') }}</p>
+    <!-- Display accepted proposal details -->
+    @if($acceptedProposal)
+        <div class="card ">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Rincian Jadwal Seminar Proposal Tugas Akhir</h4>
+            </div>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>NIM</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nim }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Nama</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nama }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Judul</strong></div>
+                    <div class="col-md-9">: {{ $judulTugasAkhir->judul ?? '-' }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Ruangan</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->ruangan->nama }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Tanggal</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->tanggal_waktu->format('d M Y') }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Waktu</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->tanggal_waktu->format('H:i') }}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3"><strong>Dosen Pembimbing</strong></div>
+                    <div class="col-md-9">: {{ $acceptedProposal->mahasiswaBimbingan->dosenPembimbing->dosen->nama }}</div>
+                </div>
+            </div>
 
             <table class="table table-bordered mt-3">
                 <thead>
@@ -47,11 +68,25 @@
             </table>
         </div>
     </div>
+    @else
+    <!-- Loop through seminarProposals to display status messages -->
+    @foreach($seminarProposals as $proposal)
+    @if($proposal->validasi_pembimbing == 'diproses')
+        <div class="alert alert-info mt-5 border-3 border-primary" role="alert">
+            <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+            <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
+            🔄 Pengajuan Seminar Proposal Mu sedang Diproses. Hubungi Dosen Pembimbing Mu untuk memintak Validasi.
+        </div>
+    @elseif($proposal->validasi_pembimbing == 'valid')
+        <div class="alert alert-success mt-5 border-4 border-success" role="alert">
+            <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+            <span style="font-size: 1.5rem; "class="fw-bold">Informasi</span> <br>
+            <br>    ✅ Pengajuan Seminar Proposal Mu sudah tervalidasi oleh Dosen Pembimbing. Hubungi prodi mu untuk memintak jadwal Seminar mu.
+        </div>
+    @endif
+@endforeach
+
 @endif
-
-
-
-
 
     <h2>Ajukan Proposal Seminar</h2>
     <hr>
@@ -83,18 +118,28 @@
                 <th class="text-center">Mahasiswa Bimbingan</th>
                 <th class="text-center">File KHS</th>
                 <th class="text-center">Kartu Bimbingan</th>
-                <th class="text-center">Status</th>
+                <th class="text-center">Validasi Dosen</th>
+                <th class="text-center">Validasi Prodi</th>
                 <th class="text-center">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($seminarProposals as $proposal)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $proposal->mahasiswaBimbingan->mahasiswa->nama }}</td>
-                    <td><a href="{{ asset('uploads/seminar_proposals/' . $proposal->file_KHS) }}" target="_blank">Lihat File</a></td>
-                    <td><a href="{{ asset('uploads/seminar_proposals/' . $proposal->Kartu_Bimbingan) }}" target="_blank">Lihat File</a></td>
-                    <td>
+                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->file_KHS) }}" target="_blank">Lihat File</a></td>
+                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->Kartu_Bimbingan) }}" target="_blank">Lihat File</a></td>
+                    <td class="text-center">
+                        @if($proposal->validasi_pembimbing == 'ditolak')
+                            <span class="badge bg-danger badge-pill">{{ ucfirst($proposal->validasi_pembimbing) }}</span>
+                        @elseif($proposal->validasi_pembimbing == 'diproses')
+                            <span class="badge bg-secondary badge-pill">{{ ucfirst($proposal->validasi_pembimbing) }}</span>
+                        @elseif($proposal->validasi_pembimbing == 'valid')
+                            <span class="badge bg-success badge-pill">{{ ucfirst($proposal->validasi_pembimbing) }}</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
                         @if($proposal->status_prodi == 'ditolak')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @elseif($proposal->status_prodi == 'diproses')
@@ -103,7 +148,7 @@
                             <span class="badge bg-success badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @endif
                     </td>
-                    <td>
+                    <td class="text-center">
                         @if($proposal->status_prodi == 'diproses')
                             <form action="{{ route('mahasiswa_proposal.destroy', $proposal->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proposal ini?');">
                                 @csrf
@@ -118,10 +163,6 @@
             @endforeach
         </tbody>
     </table>
-
-
-
-
 </div>
 
 <!-- Modal Create Proposal -->

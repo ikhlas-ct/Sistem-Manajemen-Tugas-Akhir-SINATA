@@ -85,7 +85,7 @@
                          height="100" 
                          alt="{{ $pembimbing->dosen->nama ?? '-' }}">
                 </div>
-                <div class="card-footer">
+                <div class="card-footer mb-3">
                     <h5 class="mb-3 text-capitalize">Fakultas: {{ $pembimbing->dosen->department ?? '-' }}</h5>
                     <p class="text-capitalize fs-5 text-dark fw-bold">Deskripsi:</p>
                     <p class="description">{{ $pembimbing->dosen->deskripsi ?? '-' }}</p>

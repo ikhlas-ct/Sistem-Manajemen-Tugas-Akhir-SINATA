@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ControllerPrint;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\KaprodiController;
@@ -72,14 +73,21 @@ Route::middleware(['auth', 'role:kaprodi'])->group(function () {
 
 // // Dosen routes
 Route::middleware(['auth', 'role:dosen'])->group(function () {
+
     Route::get('dosen/dashboard', [DosenController::class, 'dashboard'])->name('dosen.dashboard');
     Route::get('dosen/profile', [DosenController::class, 'profile'])->name('dosen.profile');
     Route::put('/dosen/profile/update', [DosenController::class, 'updateProfile'])->name('dosen.profile.update');
     Route::get('/konsultasi', [DosenController::class, 'konsultasi_show'])->name('Halaman_Konsultasi');
     Route::put('/dosen/update/password', [DosenController::class, 'updatepassword'])->name('dosen.update.password');
-    Route::get('/daftar-judul', [DosenController::class, 'daftar_judul'])->name('dosen_daftar_judul');
-    Route::put('/judul/{id}/update-status', [DosenController::class, 'updateStatus'])->name('judul.update_status');
 
+    Route::get('/dosen-pembimbing/students', [DosenController::class, 'showStudents'])->name('dosen_pembimbing.students');
+
+    Route::get('/dosen/judul-tugas-akhir', [DosenController::class, 'showSubmittedTitles'])->name('dosen_pengajuan_judul');
+    Route::post('/dosen/judul-tugas-akhir/approve/{id}', [DosenController::class, 'approveTitle'])->name('dosen.judul_tugas_akhir.approve');
+    Route::post('/dosen/judul-tugas-akhir/reject/{id}', [DosenController::class, 'rejectTitle'])->name('dosen.judul_tugas_akhir.reject');
+
+    Route::get('/dosen/konsultasi', [DosenController::class, 'index'])->name('dosen.konsultasi.index');
+    Route::post('/dosen/konsultasi/respond/{id}', [DosenController::class, 'respond'])->name('dosen.konsultasi.respond');
 
 
 });
@@ -92,12 +100,16 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('/pemilihan', [MahasiswaController::class, 'pemilihan_pembimbing'])->name('mahasiswa_halamanPemilihan');
     Route::post('/pilih-dosbing/{pembimbing}',[MahasiswaController::class,'pilih_dosbing' ])->name('pilih.dosbing');
     // liat pembimbing
+    Route::middleware(['check.supervisor'])->group(function () {
+
     Route::get('/lihat-pembimbing', [MahasiswaController::class, 'lihat_pembimbing'])->name('lihat.pembimbing');
     Route::get('/konsultasi', [MahasiswaController::class, 'konsul'])->name('halamanKonsultasi');
     Route::get('/tgl_penting', [MahasiswaController::class, 'tgl_penting'])->name('halamanTanggal');
     // inputjudul
     Route::get('/Tugas_akhir', [MahasiswaController::class, 'input_judul'])->name('mahasiswa_input_judul');
     Route::post('/judul_tugas_akhir', [MahasiswaController::class, 'store_judul'])->name('judul_tugas_akhir.store');
+    Route::delete('/judul_tugas_akhir/{id}',[MahasiswaController::class, 'destroy_judul'] )->name('judul_tugas_akhir_destroy');
+
     // Input Logbook
     Route::get('/Logbook', [MahasiswaController::class, 'input_logbook'])->name('mahasiswa_input_logbook');
     Route::post('logbooks', [MahasiswaController::class, 'logbook_store'])->name('logbook.store');
@@ -110,37 +122,25 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('/seminar-proposal/create', [MahasiswaController::class, 'create_proposal'])->name('mahasiswa_create_proposal');
     Route::post('/seminar-proposal', [MahasiswaController::class, 'store_proposal'])->name('mahasiswa_proposal.store');
 
-
-
-
-    Route::get('/konsultasi-bimbingan/print', [MahasiswaController::class, 'printKonsultasiBimbingan'])->name('print-konsultasi-bimbingan');
+    Route::get('/konsultasi-bimbingan/print', [ControllerPrint::class, 'printKonsultasiBimbingan'])->name('print-konsultasi-bimbingan');
     Route::delete('/mahasiswa_proposal/{id}', [MahasiswaController::class, 'destroy_proposal'])->name('mahasiswa_proposal.destroy');
+    Route::get('penilaiansempro', [MahasiswaController::class, 'penilaian_proposal'])->name('mahasiswa_nilai_proposal');
 
 
+});
 
 
+Route::fallback(function () {
+    $user = Auth::user();
+    if ($user) {
+        return redirect()->route('dashboard');
+ 
+    }
+    return redirect()->route('login');
+});
 
 
 
 
 });
 
-// // Fallback route
-// Route::fallback(function () {
-//     $user = Auth::user();
-//     if ($user) {
-//         switch ($user->role) {
-//             case 'admin':
-//                 return redirect()->route('admin.dashboard');
-//             case 'kaprodi':
-//                 return redirect()->route('kaprodi.dashboard');
-//             case 'dosen':
-//                 return redirect()->route('dosen.dashboard');
-//             case 'mahasiswa':
-//                 return redirect()->route('halamanDashboard');
-//             default:
-//                 return redirect('/'); // default page
-//         }
-//     }
-//     return redirect()->route('login');
-// });

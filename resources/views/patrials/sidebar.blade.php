@@ -2,15 +2,13 @@
     use App\Helpers\FiturHelper;
 @endphp
 
-
 @if (FiturHelper::showKaprodi())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="./index.html" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
-                    style="margin-top: -10px; margin-bottom: -50px" />
+                style="margin-top: 20px; " />
             </a>
-
             <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                 <i class="ti ti-x fs-8"></i>
             </div>
@@ -19,14 +17,14 @@
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
                 <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}"
                         aria-expanded="false">
                         <span>
-                            <i class="fas fa-tachometer-alt"></i>
+                            <i class="fas fa-home"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
@@ -41,8 +39,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{route('Pembimbing.dashboard')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('Pembimbing.dashboard')}}" aria-expanded="false">
                         <span>
                             <i class="fas fa-chalkboard-teacher"></i>
                         </span>
@@ -50,7 +47,7 @@
                     </a>
                 </li>
                 <hr>
-                <li class="sidebar-item  bg-danger rounded-1">
+                <li class="sidebar-item bg-danger rounded-1">
                     <a class="sidebar-link text-white d-flex justify-content-center w-100" href="{{ url('logout') }}"
                         aria-expanded="false">
                         <i class="fas fa-sign-out-alt"></i>
@@ -63,16 +60,13 @@
     </div>
 @endif
 
-
-
 @if (FiturHelper::showAdmin())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="{{ route('dashboard') }}" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
-                    style="margin-top: -10px; margin-bottom: -50px" />
+                style="margin-top: 20px; " />
             </a>
-
             <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                 <i class="ti ti-x fs-8"></i>
             </div>
@@ -81,14 +75,14 @@
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
                 <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
                         href="{{ url('dashboard') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-tachometer-alt"></i>
+                            <i class="fas fa-home"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
@@ -103,8 +97,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{route('admin.users')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('admin.users')}}" aria-expanded="false">
                         <span>
                             <i class="fas fa-users"></i>
                         </span>
@@ -112,10 +105,9 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link }}"
-                        href="{{ route('admin.ruangans') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('admin.ruangans') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-chalkboard-teacher"></i>
+                            <i class="fas fa-chalkboard"></i>
                         </span>
                         <span class="hide-menu">Ruangan</span>
                     </a>
@@ -148,25 +140,25 @@
         <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="./index.html" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
-                    style="margin-top: -10px; margin-bottom: -50px" />
+                    style="margin-top: 20px; " />
             </a>
-
             <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                 <i class="ti ti-x fs-8"></i>
             </div>
         </div>
+        
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
                 <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
                         href="{{ url('dashboard') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-tachometer-alt"></i>
+                            <i class="fas fa-home"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
@@ -181,8 +173,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{ route('mahasiswa_halamanPemilihan') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('mahasiswa_halamanPemilihan') }}" aria-expanded="false">
                         <span>
                             <i class="fas fa-chalkboard-teacher"></i>
                         </span>
@@ -190,26 +181,23 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{ route('lihat.pembimbing') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('lihat.pembimbing') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-chalkboard-teacher"></i>
+                            <i class="fas fa-user-friends"></i>
                         </span>
                         <span class="hide-menu">Pembimbing</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{ route('mahasiswa_input_bimbingan') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('mahasiswa_input_bimbingan') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-chalkboard-teacher"></i>
+                            <i class="fas fa-comments"></i>
                         </span>
                         <span class="hide-menu">Konsultasi</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{route('mahasiswa_input_judul')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('mahasiswa_input_judul')}}" aria-expanded="false">
                         <span>
                             <i class="fas fa-book"></i>
                         </span>
@@ -217,24 +205,55 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{route('mahasiswa_input_logbook')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('mahasiswa_input_logbook')}}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-book"></i>
+                            <i class="fas fa-book-open"></i>
                         </span>
                         <span class="hide-menu">Logbook Tugas Akhir</span>
                     </a>
                 </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Pengujian Skripsi</span>
+                </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{route('mahasiswa_create_proposal')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('mahasiswa_create_proposal')}}" aria-expanded="false">
                         <span>
                             <i class="fas fa-book"></i>
                         </span>
                         <span class="hide-menu">Seminar Proposal</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('mahasiswa_create_proposal')}}" aria-expanded="false">
+                        <span>
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+                        <span class="hide-menu">Seminar komprehensif</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Penilaian Skripsi</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('mahasiswa_nilai_proposal')}}" aria-expanded="false">
+                        <span>
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+                        <span class="hide-menu">Seminar Proposal</span>
+                    </a>
+                </li>     <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('mahasiswa_create_proposal')}}" aria-expanded="false">
+                        <span>
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+                        <span class="hide-menu">Seminar komprehensif</span>
+                    </a>
+                </li>
+                
                 <hr>
+                
                 <li class="sidebar-item bg-danger rounded-1">
                     <a class="sidebar-link text-white d-flex justify-content-center w-100" href="{{ url('logout') }}"
                         aria-expanded="false">
@@ -253,25 +272,25 @@
         <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="./index.html" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
-                    style="margin-top: -10px; margin-bottom: -50px" />
+                style="margin-top: 20px; " />
             </a>
-
             <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                 <i class="ti ti-x fs-8"></i>
             </div>
         </div>
+   
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
                 <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
                         href="{{ url('dashboard') }}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-tachometer-alt"></i>
+                            <i class="fas fa-home"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
@@ -285,28 +304,21 @@
                         <span class="hide-menu">Profile</span>
                     </a>
                 </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Pembimbingan Mahasiswa</span>
+                </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="#" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('dosen_pembimbing.students')}}" aria-expanded="false">
                         <span>
-                            <i class="fas fa-chalkboard-teacher"></i>
+                            <i class="fas fa-user-friends"></i>
                         </span>
                         <span class="hide-menu">Mahasiswa Bimbingan</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('tugas-akhir') ? 'active' : '' }}"
-                        href="{{ route('dosen_daftar_judul') }}" aria-expanded="false">
-                        <span>
-                            <i class="fas fa-book"></i>
-                        </span>
-                        <span class="hide-menu">Pengajuan Judul</span>
-                    </a>
-                </li>
-             
-                <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('konsultasi') ? 'active' : '' }}"
-                        href="{{ url('konsultasi') }}" aria-expanded="false">
+                    <a class="sidebar-link"
+                        href="{{route('dosen.konsultasi.index')}}" aria-expanded="false">
                         <span>
                             <i class="fas fa-comments"></i>
                         </span>
@@ -314,8 +326,38 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link"
-                        href="{{ url('tgl_penting') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('dosen_pengajuan_judul')}}" aria-expanded="false">
+
+                        <span>
+                            <i class="fas fa-book"></i>
+                        </span>
+                        <span class="hide-menu">Pengajuan Judul</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('dosen_pengajuan_judul')}}" aria-expanded="false">
+
+                        <span>
+                            <i class="fas fa-book"></i>
+                        </span>
+                        <span class="hide-menu">Logbook</span>
+                    </a>
+                </li>
+          
+                <li class="nav-small-cap">
+                    <i class="ti ti-home nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Pengajuan Ujian Mahasiswa</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ url('tgl_penting') }}" aria-expanded="false">
+                        <span>
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span class="hide-menu">Peng</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ url('tgl_penting') }}" aria-expanded="false">
                         <span>
                             <i class="fas fa-calendar-alt"></i>
                         </span>
@@ -335,4 +377,3 @@
         <!-- End Sidebar navigation -->
     </div>
 @endif
-

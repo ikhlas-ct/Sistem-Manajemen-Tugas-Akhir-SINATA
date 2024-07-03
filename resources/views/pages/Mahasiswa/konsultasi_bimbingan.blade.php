@@ -59,7 +59,11 @@
                     <td>{{ $konsultasi->tanggal }}</td>
                     <td>{{ $konsultasi->mahasiswaBimbingan->mahasiswa->nama }}</td>
                     <td>{{ $konsultasi->topik }}</td>
-                    <td>{{ $konsultasi->Pembahasan }}</td>
+                    <td>
+                        <span class="short-text" title="{{ $konsultasi->Pembahasan }}">
+                            {{ Str::limit($konsultasi->Pembahasan, 350) }}
+                        </span>
+                    </td>
 
                     <td>
                         @if($konsultasi->status == 'Ditolak')
@@ -140,4 +144,20 @@
         });
     });
 </script>
+@endsection
+
+@section('styles')
+<style>
+    .short-text {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 350px;
+    }
+    .short-text:hover {
+        cursor: pointer;
+    }
+</style>
+
 @endsection

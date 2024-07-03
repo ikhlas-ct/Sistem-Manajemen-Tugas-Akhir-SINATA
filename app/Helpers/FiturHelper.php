@@ -84,4 +84,41 @@ class FiturHelper
             return asset('assets/images/profile/user-1.jpg');
         }
     }
+
+    public static function ambilnamauser(): string
+    {
+        $user = auth()->user();
+    
+        if (self::showDosen()) {
+            if ($user->dosen->nama) {
+                return $user->dosen->nama;
+            }
+        }
+    
+        if (self::showKaprodi()) {
+            if ($user->prodi->nama) {
+                return $user->prodi->nama;
+            }
+        }
+    
+        if (self::showMahasiswa()) {
+            if ($user->mahasiswa->nama) {
+                return $user->mahasiswa->nama;
+            }
+        }
+    
+        if (self::showAdmin()) {
+            if ($user->admin->nama) {
+                return $user->admin->nama;
+            }
+        }
+    
+        // Default name for other roles or if user doesn't have a specific role name
+        if ($user->name) {
+            return $user->name;
+        } else {
+            return 'Guest';
+        }
+    }
+    
 }

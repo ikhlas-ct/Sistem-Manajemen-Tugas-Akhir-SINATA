@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Dosen;
 use App\Models\DosenPembimbing;
 use App\Models\JudulTugasAkhir;
+use App\Models\Konsultasi;
+use App\Models\Logbook;
+use App\Models\MahasiswaBimbingan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -132,30 +135,88 @@ public function updatePassword(Request $request)
 }
 
 
-public function daftar_judul()
+public function showStudents()
 {
-    $user = Auth::user(); // Ambil user yang sedang login (diasumsikan menggunakan authentication Laravel)
-    $dosenPembimbing = DosenPembimbing::where('dosen_id', $user->id)->first(); // Ambil data dosen pembimbing yang login
-    $judulTugasAkhirs = JudulTugasAkhir::whereHas('mahasiswaBimbingan', function ($query) use ($dosenPembimbing) {
-        $query->where('dosen_pembimbing_id', $dosenPembimbing->id);
-    })->get();
+    // Mendapatkan ID dosen pembimbing yang sedang login
+    $dosenPembimbingId = Auth::user()->dosen->id;
 
+    // Mengambil data dosen pembimbing
+    $dosenPembimbing = DosenPembimbing::findOrFail($dosenPembimbingId);
+
+    // Mengambil mahasiswa yang dibimbing oleh dosen ini
+    $mahasiswaBimbingans = MahasiswaBimbingan::where('dosen_pembimbing_id', $dosenPembimbingId)->with('mahasiswa')->get();
+
+    // Mengambil judul tugas akhir yang diterima
+    $judulTugasAkhirs = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+        ->where('status', 'diterima')
+        ->get();
+
+    // Mengambil logbook mahasiswa bimbingan
+    $logbooks = Logbook::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))->get();
+
+    // Mengirim data ke view
+    return view('pages.dosen.daftarmahasiswabimbingan', compact('dosenPembimbing', 'mahasiswaBimbingans', 'judulTugasAkhirs', 'logbooks'));
+}
+
+
+public function showSubmittedTitles()
+{
+    // Mendapatkan ID dosen pembimbing yang sedang login
+    $dosenPembimbingId = Auth::user()->dosen->id;
+
+    // Mengambil mahasiswa yang dibimbing oleh dosen ini
+    $mahasiswaBimbingans = MahasiswaBimbingan::where('dosen_pembimbing_id', $dosenPembimbingId)->pluck('id');
+
+    // Mengambil judul tugas akhir yang diajukan oleh mahasiswa bimbingan
+    $judulTugasAkhirs = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans)->where('status', 'diproses')->get();
+
+    // Mengirim data ke view
     return view('pages.dosen.pengajuanjudul', compact('judulTugasAkhirs'));
 }
 
-public function updateStatus(Request $request, $id)
+public function approveTitle(Request $request, $id)
+{
+    $judulTugasAkhir = JudulTugasAkhir::findOrFail($id);
+    $judulTugasAkhir->status = 'diterima';
+    $judulTugasAkhir->saran = $request->input('saran');
+    $judulTugasAkhir->save();
+
+    return redirect()->route('dosen_pengajuan_judul')->with('success', 'Judul tugas akhir berhasil diterima.');
+}
+
+public function rejectTitle(Request $request, $id)
+{
+    $judulTugasAkhir = JudulTugasAkhir::findOrFail($id);
+    $judulTugasAkhir->status = 'ditolak';
+    $judulTugasAkhir->saran = $request->input('saran');
+    $judulTugasAkhir->save();
+
+    return redirect()->route('dosen_pengajuan_judul')->with('success', 'Judul tugas akhir berhasil ditolak.');
+}
+
+
+public function index()
+{
+    $konsultasis = Konsultasi::with('mahasiswaBimbingan.mahasiswa')->get();
+
+    return view('pages.dosen.konsultasimahasiswa', compact('konsultasis'));
+}
+
+public function respond(Request $request, $id)
 {
     $request->validate([
-        'status' => 'required|in:diterima,ditolak',
+        'status' => 'required|in:Diproses,Diterima,Ditolak',
+        'Pembahasan' => 'nullable|string'
     ]);
 
-    $judul = JudulTugasAkhir::findOrFail($id);
-    $judul->status = $request->status;
-    $judul->save();
+    $konsultasi = Konsultasi::findOrFail($id);
+    $konsultasi->status = $request->status;
+    $konsultasi->Pembahasan = $request->Pembahasan;
+    $konsultasi->save();
 
-    return back()->with('success', 'Status judul tugas akhir berhasil diperbarui.');
+    return redirect()->route('dosen.konsultasi.index')->with('success', 'Respon konsultasi berhasil disimpan.');
 }
-    
-    
+
+
 
     }

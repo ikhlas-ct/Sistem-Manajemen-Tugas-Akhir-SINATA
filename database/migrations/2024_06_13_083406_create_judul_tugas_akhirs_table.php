@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('judul');
             $table->text('deskripsi');
             $table->string('file_judul');
+            $table->text('saran')->nullable();
             $table->enum('status', ['diterima', 'ditolak', 'diproses'])->default('diproses');
             $table->timestamps();
 

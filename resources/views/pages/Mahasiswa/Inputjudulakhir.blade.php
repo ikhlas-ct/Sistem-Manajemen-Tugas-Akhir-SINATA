@@ -19,6 +19,23 @@
     </div>
 @endif
 
+  <!-- Peringatan Status -->
+  @foreach($judulTugasAkhirs as $judul)
+  @if($judul->status == 'diproses')
+      <div class="alert alert-info mt-5 border-3 border-primary" role="alert">
+          <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+          <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
+          🔄 <span style="color: red">Judul tugas akhir anda sedang diproses hanya saat diproses anda bisa menghapus atau merubah judul tugas akhir anda</span>. Hubungi dosen pembimbing Anda untuk memintak validasi.
+      </div>
+  @elseif($judul->status == 'diterima')
+      <div class="alert alert-success mt-5 border-4 border-success" role="alert">
+          <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
+          <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
+          ✅ Judul Tugas Akhir Anda sudah diterima. Untuk merubah atau menghapus, hubungi dosen pembimbing Anda.
+      </div>
+  @endif
+@endforeach
+
 
     <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createJudulModal">
         <i class="fas fa-plus"></i> Tambah Judul Tugas Akhir
@@ -33,6 +50,8 @@
                 <th class="text-center">Deskripsi</th>
                 <th class="text-center">File</th>
                 <th class="text-center">Status</th>
+                <th class="text-center">Aksi</th>
+
             </tr>
         </thead>
         <tbody>
@@ -51,6 +70,15 @@
                             <span class="badge bg-secondary badge-pill">{{ ucfirst($judul->status) }}</span>
                         @elseif($judul->status == 'diterima')
                             <span class="badge bg-success badge-pill">{{ ucfirst($judul->status) }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($judul->status == 'diproses')
+                            <form action="{{ route('judul_tugas_akhir_destroy', $judul->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
                         @endif
                     </td>
                 </tr>

@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SeminarProposal extends Model
+class SeminarKomprehensif extends Model
 {
     use HasFactory;
+
+    protected $table = 'seminar_komprehensif';
+
     protected $fillable = [
         'mahasiswa_bimbingan_id',
         'file_KHS',
@@ -18,18 +21,16 @@ class SeminarProposal extends Model
         'ruangan_id',
         'status_prodi',
         'status_lulus',
-        'validasi_pembimbing',
         'nilai_penguji_1',
         'nilai_penguji_2',
-        'alasan'
+        'validasi_pembimbing'
     ];
-    protected $casts = [
-        'tanggal_waktu' => 'datetime',
-    ];
+
     public function mahasiswaBimbingan()
     {
         return $this->belongsTo(MahasiswaBimbingan::class, 'mahasiswa_bimbingan_id');
     }
+
     public function dosenPenguji1()
     {
         return $this->belongsTo(Dosen::class, 'dosen_penguji_1_id');
@@ -39,6 +40,7 @@ class SeminarProposal extends Model
     {
         return $this->belongsTo(Dosen::class, 'dosen_penguji_2_id');
     }
+
     public function ruangan()
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
