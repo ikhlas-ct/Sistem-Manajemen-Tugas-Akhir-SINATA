@@ -88,8 +88,17 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::post('/dosen/judul-tugas-akhir/approve/{id}', [DosenController::class, 'approveTitle'])->name('dosen.judul_tugas_akhir.approve');
     Route::post('/dosen/judul-tugas-akhir/reject/{id}', [DosenController::class, 'rejectTitle'])->name('dosen.judul_tugas_akhir.reject');
 
-    Route::get('/dosen/konsultasi', [DosenController::class, 'index'])->name('dosen.konsultasi.index');
+    Route::get('/dosen/konsultasi', [DosenController::class, 'rutekonsultasi'])->name('dosen.konsultasi.index');
     Route::post('/dosen/konsultasi/respond/{id}', [DosenController::class, 'respond'])->name('dosen.konsultasi.respond');
+    
+    Route::get('/print-konsultasi-bimbingan/{mahasiswaBimbinganId}', [DosenController::class, 'printKonsultasiBimbingan'])->name('dosenprintkonsultasi');
+
+    Route::get('/logbook/persetujuan', [DosenController::class, 'rutelogbook'])->name('dosen.logbook.index');
+    Route::post('/logbook/{id}/approve', [DosenController::class, 'approvelogbook'])->name('dosen.logbook.approve');
+    Route::post('/logbook/{id}/reject', [DosenController::class, 'rejectlogbook'])->name('dosen.logbook.reject');
+
+    
+
 
 
 });

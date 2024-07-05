@@ -11,14 +11,14 @@
     <table class="table" id="studentsTable">
         <thead>
             <tr>
-                <th>No</th>
-                <th>NIM</th>
-                <th>Nama Mahasiswa</th>
-                <th>Program Studi</th>
-                <th>No HP/WA</th>
-                <th>Judul Tugas Akhir</th>
-                <th>BAB</th>
-                <th>Aksi</th> <!-- Kolom untuk aksi -->
+                <th class="text-center">No</th>
+                <th class="text-center">NIM</th>
+                <th class="text-center">Nama Mahasiswa</th>
+                <th class="text-center">Program Studi</th>
+                <th class="text-center">No HP/WA</th>
+                <th class="text-center">Judul Tugas Akhir</th>
+                <th class="text-center">BAB</th>
+                <th class="text-center">Detail</th> <!-- Kolom untuk aksi -->
             </tr>
         </thead>
         <tbody>
@@ -35,11 +35,12 @@
                     <td>{{ $mahasiswaBimbingan->mahasiswa->no_hp }}</td>
                     <td>{{ $judulTugasAkhir->judul ?? 'Belum Ada Judul Yang Diterima' }}</td>
                     <td>{{ $logbook->bab ?? 'Belum Ada' }}</td>
-                    <td>
+                    <td class="text-center">
                         <a href="{{ route('mahasiswa.detail', $mahasiswaBimbingan->id) }}" class="btn btn-primary">
-                            Lihat Detail
+                            <i class="fas fa-eye"></i> 
                         </a>
                     </td>
+                    
                 </tr>
             @endforeach
         </tbody>

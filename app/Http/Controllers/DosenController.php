@@ -10,6 +10,7 @@ use App\Models\DosenPembimbing;
 use App\Models\JudulTugasAkhir;
 use App\Models\Konsultasi;
 use App\Models\Logbook;
+use App\Models\Mahasiswa;
 use App\Models\MahasiswaBimbingan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -26,10 +27,7 @@ class DosenController extends Controller
     {
         $this->middleware('role:dosen');
     }
-    public function Dashboard()
-    {
-        return view('Dosen.dashboard.Dashboard');
-    }
+  
     public function profile()
     {
         // dd(Auth::user()->dosen);
@@ -176,17 +174,18 @@ public function bimbinganshow($id)
 
     // Mengambil judul tugas akhir yang diterima untuk mahasiswa ini
     $judulTugasAkhir = JudulTugasAkhir::where('mahasiswa_bimbingan_id', $id)
-        ->where('status', 'diterima')
+        ->where('status', ['diterima',])
         ->first();
 
-    // Mengambil logbook terbaru untuk mahasiswa ini
-    $logbook = Logbook::where('mahasiswa_bimbingan_id', $id)
+    // Mengambil semua logbook untuk mahasiswa ini
+    $logbooks = Logbook::where('mahasiswa_bimbingan_id', $id)
         ->latest()
-        ->first();
+        ->get();
 
     // Mengirim data ke view, pastikan judulTugasAkhir tidak null sebelum dikirimkan
-    return view('pages.dosen.mahasiswadetail', compact('mahasiswaBimbingan', 'judulTugasAkhir', 'logbook'));
+    return view('pages.dosen.mahasiswadetail', compact('mahasiswaBimbingan', 'judulTugasAkhir', 'logbooks'));
 }
+
 
 
 
@@ -227,12 +226,24 @@ public function rejectTitle(Request $request, $id)
 }
 
 
-public function index()
-{
-    $konsultasis = Konsultasi::with('mahasiswaBimbingan.mahasiswa')->get();
+public function rutekonsultasi()
+    {
+        $dosenId = Auth::user()->dosen->id; // Ambil ID dosen yang sedang login
 
-    return view('pages.dosen.konsultasimahasiswa', compact('konsultasis'));
-}
+        // Ambil semua data konsultasi terkait dosen yang sedang login
+        $konsultasis = Konsultasi::with('mahasiswaBimbingan.mahasiswa')
+            ->whereHas('mahasiswaBimbingan.dosenPembimbing', function($query) use ($dosenId) {
+                $query->where('dosen_id', $dosenId);
+            })->get();
+
+        // Ambil daftar nama mahasiswa dari mahasiswaBimbingan terkait dosen yang sedang login
+        $mahasiswaList = Mahasiswa::whereHas('mahasiswaBimbingans.dosenPembimbing', function($query) use ($dosenId) {
+            $query->where('dosen_id', $dosenId);
+        })->get();
+
+        return view('pages.dosen.konsultasimahasiswa', compact('konsultasis', 'mahasiswaList'));
+    }
+
 
 public function respond(Request $request, $id)
 {
@@ -248,6 +259,67 @@ public function respond(Request $request, $id)
 
     return redirect()->route('dosen.konsultasi.index')->with('success', 'Respon konsultasi berhasil disimpan.');
 }
+public function printKonsultasiBimbingan($mahasiswaBimbinganId)
+    {
+        // Ambil data dosen yang sedang login
+        $dosen = Auth::user()->dosen;
+
+        // Ambil data mahasiswa bimbingan berdasarkan ID
+        $mahasiswaBimbingan = MahasiswaBimbingan::with('mahasiswa', 'dosenPembimbing.dosen')->findOrFail($mahasiswaBimbinganId);
+
+        // Periksa apakah dosen yang sedang login adalah dosen pembimbing dari mahasiswa bimbingan tersebut
+        if ($mahasiswaBimbingan->dosenPembimbing->dosen->id !== $dosen->id) {
+            return abort(403, 'NOT FOUND ');
+        }
+
+        // Ambil riwayat konsultasi yang diterima oleh dosen tersebut dengan mahasiswa bimbingannya
+        $konsultasis = Konsultasi::where('mahasiswa_bimbingan_id', $mahasiswaBimbinganId)
+            ->where('status', 'Diterima')
+            ->get();
+
+        // Ambil judul tugas akhir yang diterima
+        $judulTugasAkhir = JudulTugasAkhir::where('mahasiswa_bimbingan_id', $mahasiswaBimbinganId)
+            ->where('status', 'diterima')
+            ->first();
+
+        return view('pages.dosen.konsultasi_bimbingan_print', compact('mahasiswaBimbingan', 'judulTugasAkhir', 'konsultasis'));
+    }
+
+
+
+
+public function approvelogbook(Request $request, $id)
+{
+    $logbook = Logbook::findOrFail($id);
+    $logbook->status = 'Diterima';
+    $logbook->respon = $request->input('respon');
+    $logbook->save();
+
+    return redirect()->back()->with('success', 'Logbook berhasil diterima.');
+}
+
+public function rejectlogbook(Request $request, $id)
+{
+    $logbook = Logbook::findOrFail($id);
+    $logbook->status = 'Direvisi';
+    $logbook->respon = $request->input('respon');
+    $logbook->save();
+
+    return redirect()->back()->with('success', 'Logbook berhasil ditolak.');
+}
+
+
+
+public function rutelogbook()
+{
+    $dosenPembimbingId = Auth::user()->dosen->id;
+    $mahasiswaBimbingans = MahasiswaBimbingan::where('dosen_pembimbing_id', $dosenPembimbingId)->pluck('id');
+    $logbooks = Logbook::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans)->where('status', 'diproses')->get();
+
+    return view('pages.dosen.pengajuanglogbook', compact('logbooks'));
+}
+
+
 
 
 

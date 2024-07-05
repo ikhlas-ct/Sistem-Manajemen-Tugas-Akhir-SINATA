@@ -16,6 +16,8 @@ class Logbook extends Model
         'deskripsi',
         'file_path',
         'status',
+        'respon'
+
     ];
     public function mahasiswaBimbingan()
     {

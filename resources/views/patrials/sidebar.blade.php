@@ -335,12 +335,12 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('dosen_pengajuan_judul')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('dosen.logbook.index')}}" aria-expanded="false">
 
                         <span>
                             <i class="fas fa-book"></i>
                         </span>
-                        <span class="hide-menu">Logbook</span>
+                        <span class="hide-menu">Pengajuan Logbook</span>
                     </a>
                 </li>
           

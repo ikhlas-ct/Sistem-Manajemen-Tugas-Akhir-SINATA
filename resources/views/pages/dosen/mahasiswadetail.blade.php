@@ -6,6 +6,7 @@
 <div class="container">
     <div class="row">
         <h3>Detail Mahasiswa Bimbingan Skripsi</h3>
+
     </div>
     <hr>
     <div class="row">
@@ -42,6 +43,11 @@
                         <th>Judul Tugas Akhir</th>
                         <td>{{ $judulTugasAkhir->judul ?? '-' }}</td>
                     </tr>
+                    <tr>
+                        <th>Riwayat Konsultasi</th>
+                        <td><a href="{{ route('dosenprintkonsultasi', ['mahasiswaBimbinganId' => $mahasiswaBimbingan->id]) }}" class="btn btn-primary ml-3">Print Riwayat Konsultasi</a></td>
+                    </tr>
+
                 </tbody>
             </table>
         </div>
@@ -66,28 +72,70 @@
     <div class="row mt-4">
         <div class="col-md-12">
             <h4>Logbook Terbaru</h4>
-            @if ($logbook)
-            <table class="table">
+            @if ($logbooks->count() > 0)
+            <table class="table" id="mahasiswadetail"> 
+                <thead>
+                    <tr>
+                        <th class="text-center">NO</th>
+                        <th class="text-center">Judul</th>
+                        <th class="text-center">Bab</th>
+                        <th class="text-center">Deskripsi</th>
+                        <th class="text-center">File</th>
+                        <th class="text-center">Status</th>
+
+                        
+                    </tr>
+                </thead>
                 <tbody>
+                    @foreach ($logbooks as $logbook)
                     <tr>
-                        <th>Tanggal</th>
-                        <td>{{ $logbook->tanggal }}</td>
+                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td>{{ $logbook->judul_tugas_akhir }}</td>
+                        <td class="text-center">{{ $logbook->bab }}</td>
+                        <td >{{ ucfirst($logbook->deskripsi) }}</td>
+                        <td class="text-center">
+                            <a href="{{ asset('uploads/logbook/' . $logbook->file_path) }}" target="_blank">      
+                                <i class="fas fa-file fa-2x text-success"></i>
+                            </a>                    
+                        </td>
+                        <td class="text-center align-middle">
+                            <span class="badge bg-success">{{ ucfirst($logbook->status) }}</span>
+                        </td>
+                        
                     </tr>
-                    <tr>
-                        <th>Materi Bimbingan</th>
-                        <td>{{ $logbook->materi_bimbingan }}</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                        <td>{{ ucfirst($logbook->status) }}</td>
-                    </tr>
-                    <!-- Add more details about the logbook if needed -->
+                    @endforeach
                 </tbody>
             </table>
             @else
-            <p>Belum ada logbook yang tercatat untuk mahasiswa ini.</p>
+            <p>Belum ada logbook yang diterima untuk mahasiswa ini.</p>
             @endif
         </div>
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#mahasiswadetail').DataTable({
+            "pagingType": "full_numbers",
+            "language": {
+                "search": "Cari:",
+                "paginate": {
+                    "first": "Awal",
+                    "last": "Akhir",
+                    "next": "Berikutnya",
+                    "previous": "Sebelumnya"
+                },
+                "emptyTable": "Tidak ada data di dalam tabel",
+                "zeroRecords": "Tidak ditemukan data yang sesuai"
+            },
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">'
+        });
+
+    });
+        
+</script>
+@endsection
+
+

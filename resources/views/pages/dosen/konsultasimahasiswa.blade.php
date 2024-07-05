@@ -8,6 +8,17 @@
     <h1>Daftar Pengajuan Konsultasi</h1>
     <hr>
 
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <select id="studentFilter" class="form-select form-select-custom text-center" style="background-color: #007bff; color: white;">
+                <option value="" style="background-color: white; color: black;">-- Nama Mahasiswa --</option>
+                @foreach($mahasiswaList as $mahasiswa)
+                    <option value="{{ $mahasiswa->nama }}" style="background-color: white; color: black;">{{ $mahasiswa->nama }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -55,7 +66,6 @@
                             Respon
                         </button>
                     </td>
-                    
                 </tr>
             @endforeach
         </tbody>
@@ -84,7 +94,6 @@
                             <label for="Pembahasan">Pembahasan</label>
                             <textarea name="Pembahasan" id="Pembahasan" class="form-control" rows="20" style="resize: vertical;"></textarea>
                         </div>
-                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -94,13 +103,13 @@
             </div>
         </div>
     </div>
-    
 </div>
 @endsection
+
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('#konsultasiTable').DataTable({
+        var table = $('#konsultasiTable').DataTable({
             "pagingType": "full_numbers",
             "language": {
                 "search": "Cari:",
@@ -116,21 +125,25 @@
             "dom": '<"top"lf>rt<"bottom"ip><"clear">'
         });
 
+        // Filter by student name
+        $('#studentFilter').on('change', function () {
+            table.column(1).search(this.value).draw();
+        });
+
         $('.respond-button').on('click', function() {
             var konsultasiId = $(this).data('id');
             var status = $(this).data('status');
             var pembahasan = $(this).data('pembahasan');
-            
+
             $('#respondForm').attr('action', '/dosen/konsultasi/respond/' + konsultasiId);
             $('#status').val(status);
             $('#Pembahasan').val(pembahasan);
-            
+
             $('#respondModal').modal('show');
         });
     });
 </script>
 @endsection
-
 
 @section('styles')
 <style>
@@ -151,5 +164,3 @@
     }
 </style>
 @endsection
-
-
