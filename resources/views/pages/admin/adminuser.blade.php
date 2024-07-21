@@ -45,8 +45,12 @@
             {{ session('success') }}
         </div>
     @endif
+        
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createUserModal">
+        <i class="fas fa-user-plus"></i> Create User
+    </button>
 
-    <div class="row mb-4">
+    <div class="row mb-4 ">
         <div class="col-md-3 mb-3">
             <select id="roleFilter" class="form-select form-select-custom text-center"  style="background-color: #007bff; color: white;">
                 <option value="" style="background-color: white; color: black;">-- Semua Role --</option>
@@ -66,6 +70,7 @@
             </select>
         </div>
     </div>
+    
 
     <div class="datatable-container mb-3">
         <table id="usersTable" class="table table-bordered mt-3">

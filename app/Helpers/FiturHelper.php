@@ -1,6 +1,13 @@
 <?php
 
 namespace App\Helpers;
+use App\Models\JudulTugasAkhir;
+use App\Models\Konsultasi;
+use App\Models\Logbook;
+use App\Models\Mahasiswa;
+use App\Models\MahasiswaBimbingan;
+use App\Models\SeminarKomprehensif;
+use App\Models\SeminarProposal;
 
 class FiturHelper
 {
@@ -120,5 +127,63 @@ class FiturHelper
             return 'Guest';
         }
     }
+
+
+    // public static function ambilDataMahasiswa()
+    // {
+    //     // Mengambil data mahasiswa
+    //     $mahasiswaId = auth()->user()->mahasiswa->id; // Pastikan user memiliki relasi ke mahasiswa
+    //     $mahasiswa = Mahasiswa::find($mahasiswaId);
+
+    //     if (!$mahasiswa) {
+    //         // Handle if mahasiswa not found
+    //         return redirect()->back()->with('error', 'Mahasiswa not found');
+    //     }
+
+    //     // Mengambil data bimbingan
+    //     $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
+
+    //     if ($mahasiswaBimbingans->isEmpty()) {
+    //         // Handle if no bimbingans found
+    //         return redirect()->back()->with('error', 'No bimbingans found');
+    //     }
+
+    //     // Mengambil data judul terkait mahasiswa bimbingan yang diterima
+    //     $judul = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+    //                             ->where('status', 'diterima')
+    //                             ->first();
+
+    //     // Mengambil data logbook terkait mahasiswa bimbingan yang diterima
+    //     $logbooks = Logbook::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+    //                        ->where('status', 'Diterima')
+    //                        ->get();
+
+    //     // Mengambil data konsultasi terkait mahasiswa bimbingan yang diterima
+    //     $konsultasis = Konsultasi::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+    //                              ->where('status', 'Diterima')
+    //                              ->get();
+
+    //     // Mengambil data seminar proposal terkait mahasiswa bimbingan dengan status_prodi lulus
+    //     $seminarProposal = SeminarProposal::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+    //                                       ->where('status_prodi', 'lulus')
+    //                                       ->first();
+
+    //     // Mengambil data seminar komprehensif terkait mahasiswa bimbingan dengan status_prodi lulus
+    //     $seminarKomprehensif = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+    //                                               ->where('status_prodi', 'lulus')
+    //                                               ->first();
+
+    //     return [
+    //         'mahasiswa' => $mahasiswa,
+    //         'mahasiswaBimbingans' => $mahasiswaBimbingans,
+    //         'judul' => $judul,
+    //         'logbooks' => $logbooks,
+    //         'konsultasis' => $konsultasis,
+    //         'seminarProposal' => $seminarProposal,
+    //         'seminarKomprehensif' => $seminarKomprehensif
+    //     ];
+    // }
+
+
     
 }

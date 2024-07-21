@@ -25,5 +25,19 @@ class Dosen extends Model
     {
         return $this->belongsTo(User::class,'user_id');
     }
+    public function dosenPembimbings()
+{
+    return $this->hasMany(DosenPembimbing::class);
+}
+
+public function seminarProposals1()
+    {
+        return $this->hasMany(SeminarProposal::class, 'dosen_penguji_1_id');
+    }
+
+    public function seminarProposals2()
+    {
+        return $this->hasMany(SeminarProposal::class, 'dosen_penguji_2_id');
+    }
 
 }

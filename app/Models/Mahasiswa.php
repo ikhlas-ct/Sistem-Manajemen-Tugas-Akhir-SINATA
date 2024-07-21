@@ -26,10 +26,17 @@ class Mahasiswa extends Model
     }
     public function mahasiswaBimbingans()
     {
-        return $this->hasMany(MahasiswaBimbingan::class, 'mahasiswa_id');
+        return $this->HasOne(MahasiswaBimbingan::class, 'mahasiswa_id');
     }
     public function judulTugasAkhirs()
 {
     return $this->hasMany(JudulTugasAkhir::class);
 }
+public function seminarProposals()
+{
+    return $this->hasMany(SeminarProposal::class);
+}
+
+
+
 }

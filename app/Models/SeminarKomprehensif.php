@@ -13,17 +13,19 @@ class SeminarKomprehensif extends Model
 
     protected $fillable = [
         'mahasiswa_bimbingan_id',
-        'file_KHS',
+        'transkrip_nilai',
         'Kartu_Bimbingan',
+        'sertifikat_pkl',
+        'KRS',
         'dosen_penguji_1_id',
         'dosen_penguji_2_id',
         'tanggal_waktu',
         'ruangan_id',
         'status_prodi',
-        'status_lulus',
-        'nilai_penguji_1',
-        'nilai_penguji_2',
-        'validasi_pembimbing'
+        'validasi_pembimbing',
+        'komentar_penguji_1', 
+        'komentar_penguji_2',
+
     ];
 
     public function mahasiswaBimbingan()
@@ -44,5 +46,14 @@ class SeminarKomprehensif extends Model
     public function ruangan()
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
+    }
+
+    public function penilaians()
+    {
+        return $this->hasMany(Penilaian::class);
+    }
+    public function penilaianSeminarKomprehensif()
+    {
+        return $this->hasMany(PenilaianSeminarKomprehensif::class, 'seminar_komprehensif_id');
     }
 }

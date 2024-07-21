@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Penilaian Seminar Proposal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #000;
+        }
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header img {
+            width: 125px;
+        }
+        .header h3, .header p {
+            text-align: center;
+            margin: 0;
+        }
+        .header .header-content {
+            flex: 1;
+            padding: 0 20px;
+        }
+        .info {
+            display: grid;
+            grid-template-columns: 150px auto;
+            gap: 8px 16px;
+            margin-top: 20px;
+        }
+        .info p {
+            margin: 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .criteria {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .print-title {
+                display: none;
+            }
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #000;
+            margin: 10px 0;
+        }
+        .final-score {
+            margin-top: 20px;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        .final-score h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .final-score .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .final-score .score-table td {
+            padding: 8px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <img src="{{ asset('assets/images/logos/universitylogo.png') }}" alt="Logo" class="img-fluid">
+            </div>
+            <div class="header-content">
+                <h3>KEMENTERIAN PENDIDIKAN DAN KEBUDAYAAN<br>UNIVERSITAS SINATA<br>FAKULTAS KEGURUAN DAN ILMU PENDIDIKAN</h3>
+                <p>Jalan Khatib Sulaiman - Lolong Belanti, Kota Padang 25173<br>Telp: (0711) 580058, 580085 Fax: (0711) 580058<br>Laman: https://SINATA.ac.id/, email: support@SINATA.ac.id</p>
+            </div>
+        </div>
+        <hr>
+        <hr>
+        <h2 style="text-align: center">FORMAT PENILAIAN SEMINAR PROPOSAL SKRIPSI</h2>
+        <div class="info">
+            <p>Nama Mahasiswa</p>
+            <p>: {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nama }}</p>
+            
+            <p>NIM</p>
+            <p>: {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->nim }}</p>
+            
+            <p>Program Studi</p>
+            <p>: {{ $acceptedProposal->mahasiswaBimbingan->mahasiswa->fakultas }}</p>
+            
+            <p>Hari/Tanggal</p>
+            <p>: {{ \Carbon\Carbon::parse($acceptedProposal->tanggal_waktu)->isoFormat('dddd, D MMMM YYYY') }}</p>
+            
+            <p>Penguji 1</p>
+            <p>: {{ $acceptedProposal->dosenPenguji1->nama }}</p>
+            
+            <p>Penguji 2</p>
+            <p>: {{ $acceptedProposal->dosenPenguji2->nama }}</p>
+            
+            <p>Judul Proposal</p>
+            <p>: {{ $acceptedJudulTugasAkhir->judul }}</p>
+        </div>
+        
+        @php
+            $criteriaQuestions = [];
+        @endphp
+        @foreach($acceptedProposal->penilaianSeminars as $penilaian)
+            @php
+                $criteriaName = $penilaian->pertanyaan->penilaian->nama;
+                $questionText = $penilaian->pertanyaan->pertanyaan;
+                $penguji1Score = $penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id ? $penilaian->nilai : null;
+                $penguji2Score = $penilaian->dosen_id == $acceptedProposal->dosen_penguji_2_id ? $penilaian->nilai : null;
+
+                if (!isset($criteriaQuestions[$criteriaName])) {
+                    $criteriaQuestions[$criteriaName] = [];
+                }
+
+                if (!isset($criteriaQuestions[$criteriaName][$questionText])) {
+                    $criteriaQuestions[$criteriaName][$questionText] = [
+                        'nilaiPenguji1' => $penguji1Score,
+                        'nilaiPenguji2' => $penguji2Score,
+                    ];
+                } else {
+                    if ($penguji1Score !== null) {
+                        $criteriaQuestions[$criteriaName][$questionText]['nilaiPenguji1'] = $penguji1Score;
+                    }
+                    if ($penguji2Score !== null) {
+                        $criteriaQuestions[$criteriaName][$questionText]['nilaiPenguji2'] = $penguji2Score;
+                    }
+                }
+            @endphp
+        @endforeach
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Nilai Penguji 1</th>
+                    <th>Nilai Penguji 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $index = 1; @endphp
+                @foreach($criteriaQuestions as $criteria => $questions)
+                    <tr>
+                        <td colspan="4" class="criteria">Kriteria: {{ $criteria }}</td>
+                    </tr>
+                    @foreach($questions as $question => $nilai)
+                        <tr>
+                            <td>{{ $index++ }}</td>
+                            <td>{{ $question }}</td>
+                            <td>{{ $nilai['nilaiPenguji1'] ?? '-' }}</td>
+                            <td>{{ $nilai['nilaiPenguji2'] ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+            </tbody>
+        </table>
+        
+        <div class="final-score">
+            <h3>Nilai Akhir</h3>
+            <table class="score-table">
+                <tr>
+                    <td>Total Nilai Penguji 1</td>
+                    <td>: {{ number_format($nilaiAkhirDosenPenguji1, 2) }}</td>
+                </tr>
+                <tr>
+                    <td>Total Nilai Penguji 2</td>
+                    <td>: {{ number_format($nilaiAkhirDosenPenguji2, 2) }}</td>
+                </tr>
+                <tr>
+                    <td>Nilai Rata-rata</td>
+                    <td>: {{ number_format($nilaiRataRata, 2) }}</td>
+                </tr>
+                <tr>
+                    <td>Status Lulus</td>
+                    <td>: {{ $statusLulus }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

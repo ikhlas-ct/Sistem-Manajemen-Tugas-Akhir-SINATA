@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head > 
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title class="no-print">Print Konsultasi Bimbingan</title>
@@ -42,17 +42,32 @@
             text-align: left;
         }
         @media print {
-        .no-print {
-        display: none;
-          }
-         .print-title {
-        display: none;
-         }
+            .no-print {
+                display: none;
+            }
+            .print-title {
+                display: none;
+            }
+            .page-break {
+                page-break-before: always;
+            }
         }
         hr {
-            border: none; /* Menghapus border bawaan hr */
-            border-top: 1px solid #000; /* Membuat garis dengan tebal 2px dan warna hitam */
-            margin: 10px 0; /* Memberikan margin atas dan bawah */
+            border: none;
+            border-top: 1px solid #000;
+            margin: 10px 0;
+        }
+        .signature-section {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .signature {
+            text-align: center;
+            flex: 0 0 300px;
+        }
+        .signature p {
+            margin: 0;
         }
     </style>
 </head>
@@ -67,24 +82,24 @@
                 <p>Jalan Khatib Sulaiman - Lolong Belanti, Kota Padang 25173<br>Telp: (0711) 580058, 580085 Fax: (0711) 580058<br>Laman: https://SINATA.ac.id/, email: support@SINATA.ac.id</p>
             </div>
         </div>
-        <hr >
+        <hr>
         <hr>
         <h2 style="text-align: center">Kartu Bimbingan Skripsi</h2>
         <div class="content" style="display: grid; grid-template-columns: 150px auto;">
-            <p style="margin-bottom: 8px;">Nama Mahasiswa</p>
-            <p style="margin-bottom: 8px;">: {{ $mahasiswa->nama }}</p>
+            <p style="margin-bottom: 5px;">Nama Mahasiswa</p>
+            <p style="margin-bottom: 5px;">: {{ $mahasiswa->nama }}</p>
             
-            <p style="margin-bottom: 8px;">NIM</p>
-            <p style="margin-bottom: 8px;">: {{ $mahasiswa->nim }}</p>
+            <p style="margin-bottom: 5px;">NIM</p>
+            <p style="margin-bottom: 5px;">: {{ $mahasiswa->nim }}</p>
             
-            <p style="margin-bottom: 8px;">Jurusan</p>
-            <p style="margin-bottom: 8px;">: {{ $mahasiswa->fakultas }}</p>
+            <p style="margin-bottom: 5px;">Jurusan</p>
+            <p style="margin-bottom: 5px;">: {{ $mahasiswa->fakultas }}</p>
             
-            <p style="margin-bottom: 8px;">Judul Proposal</p>
-            <p style="margin-bottom: 8px;">: {{ $judulTugasAkhir ? $judulTugasAkhir->judul : "-" }}</p>
+            <p style="margin-bottom: 5px;">Judul Proposal</p>
+            <p style="margin-bottom: 5px;">: {{ $judulTugasAkhir ? $judulTugasAkhir->judul : "-" }}</p>
             
-            <p style="margin-bottom: 8px;">Pembimbing</p>
-            <p style="margin-bottom: 8px;">: {{ $mahasiswaBimbingans->isNotEmpty() ? $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nama : 'Tidak ada pembimbing' }}</p>
+            <p style="margin-bottom: 5px;">Pembimbing</p>
+            <p style="margin-bottom: 5px;">: {{ $mahasiswaBimbingans->isNotEmpty() ? $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nama : 'Tidak ada pembimbing' }}</p>
         </div>
         
         <table class="table">
@@ -114,6 +129,15 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="signature-section">
+            <div class="signature">
+                <p><strong>Padang,{{ Carbon::now()->format('d-M-Y') }}</strong></p>
+                <p style="margin-bottom: 80px;"><strong>Dosen Pembimbing </strong></p>
+                <p style="font-weight: bold; margin: 0;">{{ $mahasiswaBimbingans->isNotEmpty() ? $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nama : 'Tidak ada pembimbing' }}</p>
+                <p style="font-weight: bold; margin: 0; display: inline-block; border-top: 1px solid #000; padding-top: 5px;">NIDN: {{ $mahasiswaBimbingans->isNotEmpty() ? $mahasiswaBimbingans[0]->dosenPembimbing->dosen->nidn : 'Tidak ada pembimbing' }}</p>
+            </div>
+        </div>
     </div>
     <script>
         window.onload = function() {

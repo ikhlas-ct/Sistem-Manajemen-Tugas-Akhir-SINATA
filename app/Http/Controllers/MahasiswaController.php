@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Konsultasi;
 use App\Models\Mahasiswa;
+use App\Models\PenilaianSeminar;
+use App\Models\SeminarKomprehensif;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +16,8 @@ use App\Models\Logbook;
 use App\Models\MahasiswaBimbingan;
 use App\Models\SeminarProposal;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,10 +27,55 @@ class MahasiswaController extends Controller
     {
         $this->middleware('role:mahasiswa');
     }
-    public function index()
+    public function dashboard()
     {
-        return view('Mahasiswa.Dashboard.dashboard');
+        // Mengambil data mahasiswa
+        $mahasiswaId = auth()->user()->mahasiswa->id; // Pastikan user memiliki relasi ke mahasiswa
+        $mahasiswa = Mahasiswa::find($mahasiswaId);
+    
+        if (!$mahasiswa) {
+            // Handle if mahasiswa not found
+            return redirect()->back()->with('error', 'Mahasiswa not found');
+        }
+    
+        // Mengambil data bimbingan
+        $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
+    
+        if ($mahasiswaBimbingans->isEmpty()) {
+            // Handle if no bimbingans found
+            return redirect()->back()->with('error', 'No bimbingans found');
+        }
+    
+        // Mengambil data judul terkait mahasiswa bimbingan yang diterima
+        $judul = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+                                ->where('status', 'diterima')
+                                ->first();
+    
+        // Mengambil data logbook terkait mahasiswa bimbingan yang diterima
+        $logbooks = Logbook::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+                           ->where('status', 'Diterima')
+                           ->get();
+    
+        // Mengambil data konsultasi terkait mahasiswa bimbingan yang diterima
+        $konsultasis = Konsultasi::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+                                 ->where('status', 'Diterima')
+                                 ->get();
+    
+        // Mengambil data seminar proposal terkait mahasiswa bimbingan dengan status_prodi lulus
+        $seminarProposal = SeminarProposal::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+                                          ->where('status_prodi', 'lulus')
+                                          ->first();
+    
+        // Mengambil data seminar komprehensif terkait mahasiswa bimbingan dengan status_prodi lulus
+        $seminarKomprehensif = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbingans->pluck('id'))
+                                                  ->where('status_prodi', 'lulus')
+                                                  ->first();
+    
+        return view('pages.dashboard.index', compact(
+            'mahasiswa', 'mahasiswaBimbingans', 'judul', 'logbooks', 'konsultasis', 'seminarProposal', 'seminarKomprehensif'
+        ));
     }
+    
 
     public function konsul()
     {
@@ -212,7 +261,7 @@ public function store_judul(Request $request)
 
     if ($request->hasFile('file_judul')) {
         $file = $request->file('file_judul');
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
         $file->move(public_path('uploads/tugas-akhir'), $filename);
     } else {
         return back()->withInput()->withErrors(['file_judul' => 'File tidak ditemukan atau tidak valid.']);
@@ -334,7 +383,7 @@ public function logbook_store(Request $request)
 
     if ($request->hasFile('file')) {
         $file = $request->file('file');
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
         // Simpan file di public/uploads/logbook
         $file->move(public_path('uploads/logbook'), $filename);
         $logbook->file_path = $filename;
@@ -432,28 +481,41 @@ public function destroy_logbook($id)
         ]);
     
         // Cek apakah sudah ada proposal yang diajukan oleh mahasiswa bimbingan ini
-        $existingProposal = SeminarProposal::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)->first();
+        $existingProposals = SeminarProposal::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)
+            ->whereIn('status_prodi', ['diterima', 'diproses', 'lulus'])
+            ->get();
     
-        if ($existingProposal) {
-            if ($existingProposal->status_prodi == 'diterima' || $existingProposal->status_prodi == 'diproses') {
-                return redirect()->route('mahasiswa_create_proposal')->withErrors('Proposal seminar sudah diajukan dan sedang dalam proses atau telah diterima.');
-            }
-            // Jika status_prodi adalah 'ditolak', izinkan untuk mengajukan proposal baru tanpa menghapus proposal sebelumnya
+        if ($existingProposals->isNotEmpty()) {
+            return redirect()->route('mahasiswa_create_proposal')->withErrors('Proposal seminar sudah diajukan dan sedang dalam proses, telah diterima, atau telah lulus.');
+        }
+    
+        // Cek status logbook
+        $logbooks = Logbook::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)
+            ->where('status', 'diterima')
+            ->get();
+    
+        // Cek jika logbook mencapai bab 3 yang diterima
+        $logbookBab3 = $logbooks->first(function ($logbook) {
+            return strpos($logbook->bab, '3') !== false;
+        });
+    
+        if (!$logbookBab3) {
+            return redirect()->route('mahasiswa_create_proposal')->withErrors('Logbook belum mencapai bab 3 yang diterima.');
         }
     
         $seminarProposal = new SeminarProposal;
         $seminarProposal->mahasiswa_bimbingan_id = $request->mahasiswa_bimbingan_id;
-        
+    
         if ($request->hasFile('file_KHS')) {
             $file = $request->file('file_KHS');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = Str::random(10) . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/seminar_proposals'), $filename);
             $seminarProposal->file_KHS = $filename;
         }
     
         if ($request->hasFile('Kartu_Bimbingan')) {
             $file = $request->file('Kartu_Bimbingan');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = Str::random(10) . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/seminar_proposals'), $filename);
             $seminarProposal->Kartu_Bimbingan = $filename;
         }
@@ -462,6 +524,7 @@ public function destroy_logbook($id)
     
         return redirect()->route('mahasiswa_create_proposal')->with('success', 'Proposal seminar berhasil diajukan.');
     }
+    
     
 
 public function destroy_proposal($id)
@@ -493,7 +556,6 @@ public function destroy_proposal($id)
 
 
 
-
 public function penilaian_proposal()
 {
     $mahasiswaId = Auth::user()->mahasiswa->id; // Mendapatkan ID mahasiswa yang sedang login
@@ -502,8 +564,9 @@ public function penilaian_proposal()
     $seminarProposals = SeminarProposal::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)->get();
 
     $acceptedProposal = SeminarProposal::where('status_prodi', 'diterima')
-        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2','ruangan'])
+        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'ruangan', 'penilaianSeminars.pertanyaan'])
         ->first();
+
     $judulTugasAkhirs = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
         ->where('status', 'diterima')
         ->get();
@@ -511,13 +574,356 @@ public function penilaian_proposal()
         ->where('status', 'diterima')
         ->first();
 
-    return view('pages.Mahasiswa.penilaiansempro', compact('seminarProposals', 'mahasiswaBimbingans', 'acceptedProposal','judulTugasAkhir'));
+    // Menghitung total nilai dari dosen penguji
+    $totalNilaiDosenPenguji1 = 0;
+    $totalBobotDosenPenguji1 = 0;
+    $totalNilaiDosenPenguji2 = 0;
+    $totalBobotDosenPenguji2 = 0;
+
+    if ($acceptedProposal) {
+        foreach ($acceptedProposal->penilaianSeminars as $penilaian) {
+            if ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id) {
+                $totalNilaiDosenPenguji1 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+                $totalBobotDosenPenguji1 += $penilaian->pertanyaan->bobot;
+            } elseif ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_2_id) {
+                $totalNilaiDosenPenguji2 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+                $totalBobotDosenPenguji2 += $penilaian->pertanyaan->bobot;
+            }
+        }
+    }
+
+    $nilaiAkhirDosenPenguji1 = $totalBobotDosenPenguji1 ? $totalNilaiDosenPenguji1 / $totalBobotDosenPenguji1 : 0;
+    $nilaiAkhirDosenPenguji2 = $totalBobotDosenPenguji2 ? $totalNilaiDosenPenguji2 / $totalBobotDosenPenguji2 : 0;
+
+    // Menghitung nilai rata-rata
+    $nilaiRataRata = ($nilaiAkhirDosenPenguji1 + $nilaiAkhirDosenPenguji2) / 2;
+
+    // Menentukan status lulus
+    $statusLulus = 'Direvisi'; // Default status
+    if ($nilaiRataRata > 65) {
+        if ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2) {
+            $statusLulus = 'Lulus dengan Perbaikan';
+        } else {
+            $statusLulus = 'Lulus';
+        }
+    }
+
+    return view('pages.Mahasiswa.penilaiansempro', compact(
+        'seminarProposals', 
+        'mahasiswaBimbingans', 
+        'acceptedProposal', 
+        'judulTugasAkhir', 
+        'nilaiAkhirDosenPenguji1', 
+        'nilaiAkhirDosenPenguji2',
+        'statusLulus'
+    ));
 }
+
+public function printProposal($id)
+{
+    $acceptedProposal = SeminarProposal::where('id', $id)
+        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'penilaianSeminars.pertanyaan'])
+        ->first();
+
+    if (!$acceptedProposal) {
+        abort(404, 'Proposal tidak ditemukan.');
+    }
+
+    $acceptedJudulTugasAkhir = $acceptedProposal->mahasiswaBimbingan->judulTugasAkhirs()
+        ->where('status', 'diterima')
+        ->first();
+
+    // Menghitung total nilai dari dosen penguji
+    $totalNilaiDosenPenguji1 = 0;
+    $totalBobotDosenPenguji1 = 0;
+    $totalNilaiDosenPenguji2 = 0;
+    $totalBobotDosenPenguji2 = 0;
+
+    foreach ($acceptedProposal->penilaianSeminars as $penilaian) {
+        if ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id) {
+            $totalNilaiDosenPenguji1 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+            $totalBobotDosenPenguji1 += $penilaian->pertanyaan->bobot;
+        } elseif ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_2_id) {
+            $totalNilaiDosenPenguji2 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+            $totalBobotDosenPenguji2 += $penilaian->pertanyaan->bobot;
+        }
+    }
+
+    $nilaiAkhirDosenPenguji1 = $totalBobotDosenPenguji1 ? $totalNilaiDosenPenguji1 / $totalBobotDosenPenguji1 : 0;
+    $nilaiAkhirDosenPenguji2 = $totalBobotDosenPenguji2 ? $totalNilaiDosenPenguji2 / $totalBobotDosenPenguji2 : 0;
+
+    // Menghitung nilai rata-rata
+    $nilaiRataRata = ($nilaiAkhirDosenPenguji1 + $nilaiAkhirDosenPenguji2) / 2;
+
+    // Menentukan status lulus
+    $statusLulus = 'Direvisi'; // Default status
+    if ($nilaiRataRata > 65) {
+        if ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2) {
+            $statusLulus = 'Lulus dengan Perbaikan';
+        } else {
+            $statusLulus = 'Lulus';
+        }
+    }
+
+    return view('pages.Mahasiswa.printsempro', compact(
+        'acceptedProposal', 
+        'acceptedJudulTugasAkhir',
+        'nilaiAkhirDosenPenguji1', 
+        'nilaiAkhirDosenPenguji2',
+        'nilaiRataRata',
+        'statusLulus','totalBobotDosenPenguji1','totalNilaiDosenPenguji2','totalNilaiDosenPenguji1'
+    ));
+}
+
+
+
 
    
 
+public function showkompre()
+{
+    $mahasiswaId = Auth::user()->mahasiswa->id; // Mendapatkan ID mahasiswa yang sedang login
+    $mahasiswaBimbinganIds = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->pluck('id');
+    $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
+    $SeminarKomprehensifs = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)->get();
+
+    $acceptedKomprehensif = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->where('status_prodi',  'diterima')
+        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'ruangan'])
+        ->first();
+        
+    $judulTugasAkhirs = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->where('status', 'diterima')
+        ->get();
+
+    $judulTugasAkhir = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->where('status', 'diterima')
+        ->first();
+        
+    return view('pages.Mahasiswa.seminarkomprehesif', compact('SeminarKomprehensifs', 'mahasiswaBimbingans', 'acceptedKomprehensif', 'judulTugasAkhir'));
+}
 
 
+
+public function storekompre(Request $request)
+{
+    $request->validate([
+        'mahasiswa_bimbingan_id' => 'required|exists:mahasiswa_bimbingans,id',
+        'Kartu_Bimbingan' => 'required|file|mimes:pdf,doc,docx',
+        'transkrip_nilai' => 'required|file|mimes:pdf,doc,docx',
+        'sertifikat_pkl' => 'required|file|mimes:pdf,doc,docx',
+        'KRS' => 'required|file|mimes:pdf,doc,docx',
+    ]);
+
+    // Cek apakah sudah ada proposal yang diajukan oleh mahasiswa bimbingan ini
+    $existingProposals = SeminarKomprehensif::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)
+        ->whereIn('status_prodi', ['diproses', 'diterima', 'lulus'])
+        ->get();
+
+    if ($existingProposals->isNotEmpty()) {
+        return redirect()->route('mahasiswa_nilai_kompre')->withErrors('Seminar Komprehensif sudah diajukan dan sedang dalam proses, telah diterima, atau telah lulus.');
+    }
+
+    // Cek status logbook
+    $logbooks = Logbook::where('mahasiswa_bimbingan_id', $request->mahasiswa_bimbingan_id)
+        ->where('status', 'diterima')
+        ->get();
+
+    // Uncomment if logbook check is required
+    $logbookBab5 = $logbooks->first(function ($logbook) {
+        return strpos($logbook->bab, '5') !== false;
+    });
+
+    if (!$logbookBab5) {
+        return redirect()->route('mahasiswa_nilai_kompre')->withErrors('Logbook belum mencapai bab 5 yang diterima.');
+    }
+
+    $seminarProposal = new SeminarKomprehensif;
+    $seminarProposal->mahasiswa_bimbingan_id = $request->mahasiswa_bimbingan_id;
+
+    if ($request->hasFile('transkrip_nilai')) {
+        $file = $request->file('transkrip_nilai');
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/seminar_komprehensif'), $filename);
+        $seminarProposal->transkrip_nilai = $filename;
+    }
+
+    if ($request->hasFile('Kartu_Bimbingan')) {
+        $file = $request->file('Kartu_Bimbingan');
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/seminar_komprehensif'), $filename);
+        $seminarProposal->Kartu_Bimbingan = $filename;
+    }
+    
+    if ($request->hasFile('sertifikat_pkl')) {
+        $file = $request->file('sertifikat_pkl');
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/seminar_komprehensif'), $filename);
+        $seminarProposal->sertifikat_pkl = $filename;
+    }
+
+    if ($request->hasFile('KRS')) {
+        $file = $request->file('KRS');
+        $filename = Str::random(10) . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/seminar_komprehensif'), $filename);
+        $seminarProposal->KRS = $filename;
+    }
+
+    $seminarProposal->save();
+
+    return redirect()->route('mahasiswa_nilai_kompre')->with('success', 'Proposal seminar berhasil diajukan.');
+}
+
+
+public function destroykompre($id)
+{
+    $proposal = SeminarKomprehensif::findOrFail($id);
+
+    // Memastikan proposal dalam status "diproses"
+    if ($proposal->status_prodi == 'diproses') {
+        // Menghapus file KHS dan Kartu Bimbingan jika ada
+        if ($proposal->file_KHS && file_exists(public_path('uploads/seminar_komprehensif/' . $proposal->file_KHS))) {
+            unlink(public_path('uploads/seminar_komprehensif/' . $proposal->file_KHS));
+        }
+        if ($proposal->Kartu_Bimbingan && file_exists(public_path('uploads/seminar_komprehensif/' . $proposal->Kartu_Bimbingan))) {
+            unlink(public_path('uploads/seminar_komprehensif/' . $proposal->Kartu_Bimbingan));
+        }
+        if ($proposal->Kartu_Bimbingan && file_exists(public_path('uploads/seminar_komprehensif/' . $proposal->sertifikat_pkl))) {
+            unlink(public_path('uploads/seminar_komprehensif/' . $proposal->sertifikat_pkl));
+
+        }  if ($proposal->Kartu_Bimbingan && file_exists(public_path('uploads/seminar_komprehensif/' . $proposal->KRS))) {
+            unlink(public_path('uploads/seminar_komprehensif/' . $proposal->KRS));
+        }
+        
+        // Menghapus proposal dari database
+        $proposal->delete();
+
+        return redirect()->route('mahasiswa_nilai_kompre')->with('success', 'Proposal seminar berhasil dihapus.');
+    } else {
+        return redirect()->route('mahasiswa_nilai_kompre')->withErrors('Proposal seminar hanya dapat dihapus jika masih dalam status "diproses".');
+    }
+}
+
+
+// app/Http/Controllers/SeminarController.php
+public function printKomprehensif($id)
+{
+    $acceptedProposal = SeminarKomprehensif::where('id', $id)
+        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'penilaianSeminarKomprehensif.pertanyaan'])
+        ->first();
+
+    if (!$acceptedProposal) {
+        abort(404, 'Proposal tidak ditemukan.');
+    }
+
+    $acceptedJudulTugasAkhir = $acceptedProposal->mahasiswaBimbingan->judulTugasAkhirs()
+        ->where('status', 'diterima')
+        ->first();
+
+    // Initialize scores
+    $totalNilaiDosenPenguji1 = 0;
+    $totalBobotDosenPenguji1 = 0;
+    $totalNilaiDosenPenguji2 = 0;
+    $totalBobotDosenPenguji2 = 0;
+
+    // Calculate scores from penilaianSeminarKomprehensif
+    foreach ($acceptedProposal->penilaianSeminarKomprehensif as $penilaian) {
+        if ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id) {
+            $totalNilaiDosenPenguji1 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+            $totalBobotDosenPenguji1 += $penilaian->pertanyaan->bobot;
+        } elseif ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_2_id) {
+            $totalNilaiDosenPenguji2 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+            $totalBobotDosenPenguji2 += $penilaian->pertanyaan->bobot;
+        }
+    }
+
+    $nilaiAkhirDosenPenguji1 = $totalBobotDosenPenguji1 ? $totalNilaiDosenPenguji1 / $totalBobotDosenPenguji1 : 0;
+    $nilaiAkhirDosenPenguji2 = $totalBobotDosenPenguji2 ? $totalNilaiDosenPenguji2 / $totalBobotDosenPenguji2 : 0;
+
+    // Calculate average score
+    $totalNilaiAkhr = ($nilaiAkhirDosenPenguji1 + $nilaiAkhirDosenPenguji2) / 2;
+
+    // Determine graduation status
+    $statusLulus = 'Direvisi';
+    if ($totalNilaiAkhr > 65) {
+        $statusLulus = ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2) ? 'Lulus dengan Perbaikan' : 'Lulus';
+    }
+
+    return view('pages.Mahasiswa.printkompre', compact(
+        'acceptedProposal', 
+        'acceptedJudulTugasAkhir',
+        'nilaiAkhirDosenPenguji1', 
+        'nilaiAkhirDosenPenguji2',
+        'totalNilaiAkhr',
+        'statusLulus',
+        'totalBobotDosenPenguji1',
+        'totalNilaiDosenPenguji1',
+        'totalNilaiDosenPenguji2'
+    ));
+}
+
+
+public function penilaian_komprehensif()
+{
+    $mahasiswaId = Auth::user()->mahasiswa->id; // Mendapatkan ID mahasiswa yang sedang login
+    $mahasiswaBimbinganIds = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->pluck('id');
+    $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
+    $seminarKomprehensif = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)->get();
+
+    $acceptedProposal = SeminarKomprehensif::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->whereIn('status_prodi', ['diterima', 'direvisi']) // Adjusted to include both statuses
+        ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'ruangan', 'penilaianSeminarKomprehensif.pertanyaan'])
+        ->first();
+
+    $judulTugasAkhir = JudulTugasAkhir::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->where('status', 'diterima')
+        ->first();
+
+    // Menghitung total nilai dari dosen penguji
+    $totalNilaiDosenPenguji1 = 0;
+    $totalBobotDosenPenguji1 = 0;
+    $totalNilaiDosenPenguji2 = 0;
+    $totalBobotDosenPenguji2 = 0;
+
+    if ($acceptedProposal) {
+        foreach ($acceptedProposal->penilaianSeminarKomprehensif as $penilaian) {
+            if ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id) {
+                $totalNilaiDosenPenguji1 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+                $totalBobotDosenPenguji1 += $penilaian->pertanyaan->bobot;
+            } elseif ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_2_id) {
+                $totalNilaiDosenPenguji2 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
+                $totalBobotDosenPenguji2 += $penilaian->pertanyaan->bobot;
+            }
+        }
+    }
+
+    $nilaiAkhirDosenPenguji1 = $totalBobotDosenPenguji1 ? $totalNilaiDosenPenguji1 / $totalBobotDosenPenguji1 : 0;
+    $nilaiAkhirDosenPenguji2 = $totalBobotDosenPenguji2 ? $totalNilaiDosenPenguji2 / $totalBobotDosenPenguji2 : 0;
+
+    // Menghitung nilai rata-rata
+    $nilaiRataRata = ($nilaiAkhirDosenPenguji1 + $nilaiAkhirDosenPenguji2) / 2;
+
+    // Menentukan status lulus
+    $statusLulus = 'Direvisi'; // Default status
+    if ($nilaiRataRata > 72) {
+        if ($acceptedProposal && ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2)) {
+            $statusLulus = 'Lulus dengan Perbaikan';
+        } else {
+            $statusLulus = 'Lulus';
+        }
+    }
+
+    return view('pages.Mahasiswa.penilaiankompre', compact(
+        'seminarKomprehensif', 
+        'mahasiswaBimbingans', 
+        'acceptedProposal', 
+        'judulTugasAkhir', 
+        'nilaiAkhirDosenPenguji1', 
+        'nilaiAkhirDosenPenguji2',
+        'nilaiRataRata',
+        'statusLulus'
+    ));
+}
 
 
 

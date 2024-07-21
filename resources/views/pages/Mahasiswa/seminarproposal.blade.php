@@ -71,7 +71,10 @@
     @else
     <!-- Loop through seminarProposals to display status messages -->
     @foreach($seminarProposals as $proposal)
-    @if($proposal->validasi_pembimbing == 'diproses')
+    @if($proposal->validasi_pembimbing == 'diproses' || $proposal->validasi_pembimbing == 'valid')
+    @if($proposal->status_prodi == 'diproses' || $proposal->status_prodi == 'diterima')
+        @if($proposal->validasi_pembimbing == 'diproses')
+
         <div class="alert alert-info mt-5 border-3 border-primary" role="alert">
             <i class="fas fa-exclamation-circle" style="font-size: 1.5rem;"></i> 
             <span style="font-size: 1.5rem;" class="fw-bold">Informasi</span> <br>
@@ -84,7 +87,40 @@
             <br>    ✅ Pengajuan Seminar Proposal Mu sudah tervalidasi oleh Dosen Pembimbing. Hubungi prodi mu untuk memintak jadwal Seminar mu.
         </div>
     @endif
+    @endif
+@endif
 @endforeach
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @endif
 
@@ -118,8 +154,8 @@
                 <th class="text-center">Mahasiswa Bimbingan</th>
                 <th class="text-center">File KHS</th>
                 <th class="text-center">Kartu Bimbingan</th>
-                <th class="text-center">Validasi Dosen</th>
-                <th class="text-center">Validasi Prodi</th>
+                <th class="text-center">Validasi Pembimbing</th>
+                <th class="text-center">Status Seminar</th>
                 <th class="text-center">Aksi</th>
             </tr>
         </thead>
@@ -128,8 +164,11 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $proposal->mahasiswaBimbingan->mahasiswa->nama }}</td>
-                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->file_KHS) }}" target="_blank">Lihat File</a></td>
-                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->Kartu_Bimbingan) }}" target="_blank">Lihat File</a></td>
+                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->file_KHS) }}" target="_blank">                            <i class="fas fa-file fa-2x text-success"></i>
+                    </a></td>
+                    <td class="text-center"><a href="{{ asset('uploads/seminar_proposals/' . $proposal->Kartu_Bimbingan) }}" target="_blank"><i class="fas fa-file fa-2x text-success"></i>
+                    </a></td>
+            
                     <td class="text-center">
                         @if($proposal->validasi_pembimbing == 'ditolak')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($proposal->validasi_pembimbing) }}</span>
@@ -140,7 +179,7 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        @if($proposal->status_prodi == 'ditolak')
+                        @if($proposal->status_prodi == 'direvisi')
                             <span class="badge bg-danger badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @elseif($proposal->status_prodi == 'diproses')
                             <span class="badge bg-secondary badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
@@ -149,7 +188,7 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        @if($proposal->status_prodi == 'diproses')
+                        @if($proposal->validasi_pembimbing == 'diproses')
                             <form action="{{ route('mahasiswa_proposal.destroy', $proposal->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus proposal ini?');">
                                 @csrf
                                 @method('DELETE')

@@ -58,10 +58,14 @@
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">{{ $konsultasi->tanggal }}</td>
                     <td class="text-center">{{ $konsultasi->mahasiswaBimbingan->dosenPembimbing->dosen->nama }}</td>
-                    <td>{{ $konsultasi->topik }}</td>
+                    <td>
+                        <span class="short-text" title="{{ $konsultasi->topik }}">
+                            {{ Str::limit($konsultasi->topik, 20) }}
+                        </span>
+                    </td>
                     <td>
                         <span class="short-text" title="{{ $konsultasi->Pembahasan }}">
-                            {{ Str::limit($konsultasi->Pembahasan, 350) }}
+                            {{ Str::limit($konsultasi->Pembahasan, 20) }}
                         </span>
                     </td>
 

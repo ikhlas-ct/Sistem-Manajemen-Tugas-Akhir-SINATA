@@ -25,4 +25,17 @@ class MahasiswaBimbingan extends Model
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
+
+    public function konsultasis()
+    {
+        return $this->hasMany(Konsultasi::class);
+    }
+    public function judulTugasAkhirs()
+    {
+        return $this->hasMany(JudulTugasAkhir::class);
+    }
+    public function acceptedJudulTugasAkhirs()
+    {
+        return $this->HasOne(JudulTugasAkhir::class)->where('status', 'diterima');
+    }
 }

@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penilaian;
+use App\Models\Pertanyaan;
 use App\Models\Prodi;
 use App\Helpers\AlertHelper;
+use App\Models\Ruangan;
+use App\Models\SeminarKomprehensif;
+use App\Models\SeminarProposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -104,24 +109,20 @@ class KaprodiController extends Controller
     // CRUD Pembimbing
 
 
-
     public function Pembimbing_dashboard()
     {
-        // Ambil data dosen pembimbing
-        $dosenPembimbings = DosenPembimbing::all(); // Sesuaikan query ini dengan kebutuhan Anda
+        // Ambil semua dosen yang sudah menjadi pembimbing
+        $dosenPembimbings = DosenPembimbing::with('dosen')->get();
+        $totalDosenPembimbing = DosenPembimbing::count();
     
-        // Hitung total dosen pembimbing
-        $totalDosenPembimbing = count($dosenPembimbings);
+        // Mengambil dosen yang belum menjadi pembimbing menggunakan Eloquent subquery
+        $dosenBelumPembimbing = Dosen::whereDoesntHave('dosenPembimbings')->get();
+        // dd($dosenBelumPembimbing); 
     
-        // Ambil data dosen
-        $dosens = Dosen::all(); // Menggunakan model Dosen yang telah di-import
-    
-        return view('pages.Prodi.pemilihanpembimbing', [
-            'dosenPembimbings' => $dosenPembimbings,
-            'totalDosenPembimbing' => $totalDosenPembimbing,
-            'dosens' => $dosens,
-        ]);
+        return view('pages.Prodi.pemilihanpembimbing', compact('dosenPembimbings', 'totalDosenPembimbing', 'dosenBelumPembimbing'));
     }
+    
+    
     
     public function store_Pembimbing(Request $request)
     {
@@ -198,10 +199,181 @@ public function update_Pembimbing(Request $request, $id)
     }
 
 
+    public function proposal_show()
+    {
+        // Ambil semua seminar proposal yang masih dalam status "diproses" untuk validasi oleh Prodi
+        $seminarProposals = SeminarProposal::with(['dosenPenguji1', 'dosenPenguji2', 'ruangan', 'mahasiswaBimbingan.mahasiswa', 'mahasiswaBimbingan.acceptedJudulTugasAkhirs'])
+            ->where('status_prodi', 'diproses')
+            ->where('validasi_pembimbing', 'valid')
+            ->get();
+    
+        $dosens = Dosen::all();
+        $ruangans = Ruangan::all();
+    
+        return view('pages.Prodi.ajuansempro', compact('seminarProposals', 'dosens', 'ruangans'));
+    }
+    
+    public function atur_sempro($id)
+    {
+        $seminarProposal = SeminarProposal::findOrFail($id);
+        $dosens = Dosen::all();
+        $ruangans = Ruangan::all();
+
+        return view('pages.Prodi.seminar_proposal_atur', compact('seminarProposal', 'dosens', 'ruangans'));
+    }
+    
+
+public function setujuSempro(Request $request, $id)
+{
+    $seminarProposal = SeminarProposal::findOrFail($id);
+    
+    // Validasi data yang dikirimkan oleh user
+    $request->validate([
+        'ruangan_id' => 'required',
+        'dosen_penguji_1_id' => 'required',
+        'dosen_penguji_2_id' => 'required',
+        'tanggal_waktu' => 'required|date',
+    ]);
+    
+    // Mengambil data dari permintaan untuk disimpan dalam seminar proposal
+    $seminarProposal->ruangan_id = $request->ruangan_id;
+    $seminarProposal->dosen_penguji_1_id = $request->dosen_penguji_1_id;
+    $seminarProposal->dosen_penguji_2_id = $request->dosen_penguji_2_id;
+    $seminarProposal->tanggal_waktu = $request->tanggal_waktu;
+    $seminarProposal->status_prodi = 'diterima'; // Set status menjadi diterima
+
+    $seminarProposal->save();
+
+    return redirect()->route('seminar-proposal.index')->with('success', 'Pengaturan Jadwal Seminar Proposal Berhasil ditentukan ');
+
+}
+
+public function komprehensif_show()
+{
+    // Ambil semua seminar proposal yang masih dalam status "diproses" untuk validasi oleh Prodi
+    $SeminarKomprehensifs = SeminarKomprehensif::with(['dosenPenguji1', 'dosenPenguji2', 'ruangan', 'mahasiswaBimbingan.mahasiswa', 'mahasiswaBimbingan.acceptedJudulTugasAkhirs'])
+        ->where('status_prodi', 'diproses')
+        ->where('validasi_pembimbing', 'valid')
+        ->get();
+
+    $dosens = Dosen::all();
+    $ruangans = Ruangan::all();
+
+    return view('pages.Prodi.ajuankompre', compact('SeminarKomprehensifs', 'dosens', 'ruangans'));
+}
+
+public function Komprehensif_sempro($id)
+{
+    $SeminarKomprehensif = SeminarKomprehensif::findOrFail($id);
+    $dosens = Dosen::all();
+    $ruangans = Ruangan::all();
+
+    return view('pages.Prodi.aturkompre', compact('SeminarKomprehensif', 'dosens', 'ruangans'));
+}
+
+
+public function setujuKomprehensif(Request $request, $id)
+{
+$SeminarKomprehensif = SeminarKomprehensif::findOrFail($id);
+
+// Validasi data yang dikirimkan oleh user
+$request->validate([
+    'ruangan_id' => 'required',
+    'dosen_penguji_1_id' => 'required',
+    'dosen_penguji_2_id' => 'required',
+    'tanggal_waktu' => 'required|date',
+]);
+
+// Mengambil data dari permintaan untuk disimpan dalam seminar proposal
+$SeminarKomprehensif->ruangan_id = $request->ruangan_id;
+$SeminarKomprehensif->dosen_penguji_1_id = $request->dosen_penguji_1_id;
+$SeminarKomprehensif->dosen_penguji_2_id = $request->dosen_penguji_2_id;
+$SeminarKomprehensif->tanggal_waktu = $request->tanggal_waktu;
+$SeminarKomprehensif->status_prodi = 'diterima'; // Set status menjadi diterima
+
+$SeminarKomprehensif->save();
+
+return redirect()->route('prodi_seminar_kompre_index')->with('success', 'Pengaturan Jadwal Seminar Proposal Berhasil ditentukan ');
+
+}
 
 
 
+public function create_penilaian()
+{
+    return view('pages.Prodi.Kriteriapenilaian');
+}
 
+public function store_penilaian(Request $request)
+{
+    $penilaian = Penilaian::create($request->only('nama'));
+    foreach ($request->pertanyaans as $pertanyaan) {
+        $penilaian->pertanyaans()->create($pertanyaan);
+    }
+    return redirect()->route('prodi.penilaians.index')->with('success', 'Kriteria penilaian berhasil disimpan');
+}
+
+public function index_penilaian()
+{
+    $penilaians = Penilaian::with('pertanyaans')->get();
+    return view('pages.Prodi.lihatpenilaian', compact('penilaians'));
+}
+
+public function edit_penilaian(Penilaian $penilaian)
+{
+    return view('pages.Prodi.editpenilaian', compact('penilaian'));
+}
+
+public function update_penilaian(Request $request, Penilaian $penilaian)
+{
+    // Validasi data
+    $validatedData = $request->validate([
+        'nama' => 'required|string|max:255',
+        'pertanyaans.*.pertanyaan' => 'required|string',
+        'pertanyaans.*.bobot' => 'required|numeric',
+    ]);
+
+    // Update nama kriteria
+    $penilaian->nama = $validatedData['nama'];
+    $penilaian->save();
+
+    // Update atau hapus pertanyaan-pertanyaan yang sudah ada
+    foreach ($penilaian->pertanyaans as $pertanyaan) {
+        $pertanyaan->delete();
+    }
+
+    // Tambahkan pertanyaan baru
+    foreach ($validatedData['pertanyaans'] as $pertanyaanData) {
+        $penilaian->pertanyaans()->create([
+            'pertanyaan' => $pertanyaanData['pertanyaan'],
+            'bobot' => $pertanyaanData['bobot'],
+        ]);
+    }
+
+    // Redirect ke halaman yang sesuai
+    return redirect()->route('prodi.penilaians.index')->with('success', 'Kriteria penilaian berhasil diperbarui.');
+}
+
+public function destroy_penilaian($id)
+{
+    $pertanyaan = Pertanyaan::findOrFail($id); // Menggunakan model untuk mencari pertanyaan berdasarkan ID
+    $pertanyaan->delete(); // Menghapus pertanyaan dari database
+
+    return redirect()->back()->with('success', 'Pertanyaan berhasil dihapus'); // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+}
+
+public function destroy_kriteria($id)
+{
+    $penilaian = Penilaian::findOrFail($id);
+
+    foreach ($penilaian->pertanyaans as $pertanyaan) {
+        $pertanyaan->delete();
+    }
+
+    $penilaian->delete();
+
+    return redirect()->route('prodi.penilaians.index')->with('success', 'Kriteria penilaian dan semua pertanyaannya berhasil dihapus');
+}
 
 
 

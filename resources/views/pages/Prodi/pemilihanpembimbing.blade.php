@@ -3,7 +3,6 @@
 @section('content')
 <div class="container">
     <style>
-        /* CSS khusus untuk memperbaiki jarak elemen "Show entries" */
         .dataTables_length {
             display: flex;
             align-items: center;
@@ -16,15 +15,14 @@
 
         .dataTables_length label span,
         .dataTables_length label select {
-            margin-right: 20px; /* Adjust the margin as needed */
+            margin-right: 20px;
         }
 
-        /* resources/css/app.css */
         .truncate {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 300px; /* Adjust as needed */
+            max-width: 300px;
             display: inline-block;
             vertical-align: top;
         }
@@ -37,7 +35,7 @@
             border: 1px solid #ccc;
             padding: 5px;
             z-index: 1000;
-            max-width: 300px; /* Adjust as needed */
+            max-width: 300px;
         }
     </style>
     <h2>Daftar Dosen Pembimbing</h2>
@@ -55,14 +53,12 @@
             @endforeach
         </ul>
     </div>
-@endif
+    @endif
 
-    <!-- Tambahkan Tombol Tambah Dosen Pembimbing -->
     <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createDosenPembimbingModal">
         <i class="fas fa-user-plus"></i> Tambah Dosen Pembimbing
     </button>
     
-    <!-- Tabs for filtering users by role -->
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link {{ request()->is('kaprodi/Pembimbing') ? 'active' : '' }}" href="{{ route('Pembimbing.dashboard') }}">
@@ -71,30 +67,25 @@
                 </span>
             </a>
         </li>
-        <!-- Tambahkan tab lainnya sesuai dengan kebutuhan untuk memfilter berdasarkan jenis dosen pembimbing -->
     </ul>
 
     <div class="datatable-container mb-3">
         <table id="dosenPembimbingTable" class="table table-bordered mt-3">
             <thead>
-                <tr>
-                    <td>{{ $loop->iteration }}</td>                  
-                    <th>Dosen Pembimbing</th>
-                    <th>Jenis Pembimbing</th>
-                    <th>Aksi</th>
+                <tr >
+                    <th class="text-center">No</th>
+                    <th class="text-center">Dosen Pembimbing</th>
+                    <th class="text-center">Jenis Pembimbing</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($dosenPembimbings as $dosenPembimbing)
                 <tr>
-                    <td>{{ $dosenPembimbing->id }}</td>
+                    <td>{{ $loop->iteration }}</td>                  
                     <td>{{ $dosenPembimbing->dosen->nama }}</td>
                     <td>{{ $dosenPembimbing->jenis_dosbing }}</td>
                     <td class="text-center">
-                        <a href="{{ route('pembimbing.edit', $dosenPembimbing->id) }}" class="btn btn-primary btn-sm">
-                            <i class="fa fa-edit"></i> Edit
-                        </a>>
-
                         <form action="{{ route('prodi.dosen-pembimbings.delete', $dosenPembimbing->id) }}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
@@ -102,8 +93,7 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
-            
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -123,11 +113,12 @@
                     <div class="mb-3">
                         <label for="dosen_id" class="form-label">Dosen</label>
                         <select class="form-select" id="dosen_id" name="dosen_id" required>
-                            @foreach ($dosens as $dosen)
+                            @foreach ($dosenBelumPembimbing as $dosen)
                                 <option value="{{ $dosen->id }}">{{ $dosen->nama }}</option>
                             @endforeach
                         </select>
                     </div>
+                    
                     <div class="mb-3">
                         <label for="jenis_dosbing" class="form-label">Jenis Pembimbing</label>
                         <select class="form-select" id="jenis_dosbing" name="jenis_dosbing" required>
@@ -141,15 +132,11 @@
     </div>
 </div>
 
-
-
-
 @endsection
 
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Inisialisasi DataTable
         $('#dosenPembimbingTable').DataTable({
             "pagingType": "full_numbers",
             "language": {
@@ -163,12 +150,6 @@
             },
             "dom": '<"top"lf>rt<"bottom"ip><"clear">'
         });
-
-     
-
-    
     });
 </script>
-
-
 @endsection

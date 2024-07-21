@@ -17,11 +17,9 @@ class SeminarProposal extends Model
         'tanggal_waktu',
         'ruangan_id',
         'status_prodi',
-        'status_lulus',
         'validasi_pembimbing',
-        'nilai_penguji_1',
-        'nilai_penguji_2',
-        'alasan'
+        'komentar_penguji_1', 
+        'komentar_penguji_2',
     ];
     protected $casts = [
         'tanggal_waktu' => 'datetime',
@@ -43,4 +41,13 @@ class SeminarProposal extends Model
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
+
+    public function penilaians()
+{
+    return $this->hasMany(Penilaian::class);
+}
+public function penilaianSeminars()
+{
+    return $this->hasMany(PenilaianSeminar::class, 'seminar_proposal_id');
+}
 }

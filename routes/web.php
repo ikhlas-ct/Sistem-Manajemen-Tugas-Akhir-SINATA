@@ -67,6 +67,34 @@ Route::middleware(['auth', 'role:kaprodi'])->group(function () {
     Route::delete('/kaprodi/dosen-pembimbings/{id}', [KaprodiController::class, 'destroy_Pembimbing'])->name('prodi.dosen-pembimbings.delete');
     Route::get('/kaprodi/dosen-pembimbings/{id}', [KaprodiController::class, 'edit_pembimbing'])->name('pembimbing.edit');
 
+    Route::get('/seminar-proposal', [KaprodiController::class, 'proposal_show'])->name('seminar-proposal.index');
+    Route::get('/seminar-proposal/atur/{id}', [KaprodiController::class, 'atur_sempro'])->name('seminar-proposal.atur');
+    Route::put('/setuju-sempro/{id}', [KaprodiController::class, 'setujuSempro'])->name('prodi.setuju.sempro');
+
+
+
+    Route::get('/kaprodi/seminar-komprehesif', [KaprodiController::class, 'komprehensif_show'])->name('seminar-kompre.index');
+
+
+    Route::get('/seminar-komprehensif/atur/{id}', [KaprodiController::class, 'Komprehensif_sempro'])->name('prodi.kompre.atur');
+    Route::put('/setuju-Komprehensif/{id}', [KaprodiController::class, 'setujuKomprehensif'])->name('prodi.setuju.kompre');
+
+    Route::get('/penilaians/create', [KaprodiController::class, 'create_penilaian'])->name('prodi.penilaians.create');
+    Route::post('/penilaians', [KaprodiController::class, 'store_penilaian'])->name('prodi.penilaians.store');
+    Route::get('/penilaians', [KaprodiController::class, 'index_penilaian'])->name('prodi.penilaians.index');
+
+    Route::get('/penilaians/{penilaian}/edit', [KaprodiController::class, 'edit_penilaian'])->name('prodi.penilaians.edit');
+    Route::put('/penilaians/{penilaian}', [KaprodiController::class, 'update_penilaian'])->name('prodi.penilaians.update');
+     Route::delete('pertanyaans/{id}', [KaprodiController::class, 'destroy_penilaian'])->name('pertanyaans.destroy');
+
+     Route::delete('prodi/penilaians/{id}', [KaprodiController::class, 'destroy_kriteria'])->name('prodi.penilaians.destroy');
+
+
+
+
+
+
+
 
     
 });
@@ -97,8 +125,23 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::post('/logbook/{id}/approve', [DosenController::class, 'approvelogbook'])->name('dosen.logbook.approve');
     Route::post('/logbook/{id}/reject', [DosenController::class, 'rejectlogbook'])->name('dosen.logbook.reject');
 
-    
+    Route::get('/dosen/sempro', [DosenController::class, 'semprovalidasi'])->name('dosen_semprovalidasi');
+    Route::post('/dosen/sempro/approve/{id}', [DosenController::class, 'approve_sempro'])->name('dosen.sempro.approve');
+    Route::post('/dosen/sempro/reject/{id}', [DosenController::class, 'reject_sempro'])->name('dosen.sempro.reject');
 
+    Route::get('/dosen/seminar-komprehensif', [DosenController::class, 'semkomvalidasi'])->name('dosen_semkomvalidasi');
+    Route::post('/dosen/seminar-komprehensif/approve/{id}', [DosenController::class, 'approve_semkom'])->name('dosen.approve_semkom');
+    Route::post('/dosen/seminar-komprehensif/reject/{id}', [DosenController::class, 'reject_semkom'])->name('dosen.reject_semkom');
+
+    Route::get('seminar-proposals', [DosenController::class, 'show_seminar'])->name('dosen_seminarproposals.index');
+    Route::get('seminar/{seminarProposal}/penilaian', [DosenController::class, 'createPenilaian'])->name('dosen_seminar.penilaian.create');
+    Route::match(['post', 'put'], 'dosen/seminar/{seminarProposal}/penilaian', [DosenController::class, 'storePenilaian'])->name('dosen_seminar.penilaian.store');
+
+    
+    Route::get('seminar-komprehesif', [DosenController::class, 'show_komprehensif'])->name('dosen_seminarkomprehensif.index');
+    Route::get('komprehensif/{komprehensif}/penilaian', [DosenController::class, 'createPenilaianKompre'])->name('dosen_komprehensif.penilaian.create');
+    Route::match(['post', 'put'], 'dosen/komprehensif/{komprehensif}/penilaian', [DosenController::class, 'storePenilaianKompre'])->name('dosen_komprehensif.penilaian.store');
+    
 
 
 });
@@ -125,7 +168,6 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('/Logbook', [MahasiswaController::class, 'input_logbook'])->name('mahasiswa_input_logbook');
     Route::post('logbooks', [MahasiswaController::class, 'logbook_store'])->name('logbook.store');
     Route::delete('/logbook/{id}', [MahasiswaController::class, 'destroy_logbook'])->name('logbook.destroy');
-
     Route::get('/logbook/print', [MahasiswaController::class, 'print_logbook'])->name('logbook.print');
 
     Route::get('/konsultasi_bimbingan', [MahasiswaController::class, 'input_bimbingan'])->name('mahasiswa_input_bimbingan');
@@ -138,19 +180,33 @@ Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
     Route::get('/konsultasi-bimbingan/print', [ControllerPrint::class, 'printKonsultasiBimbingan'])->name('print-konsultasi-bimbingan');
     Route::delete('/mahasiswa_proposal/{id}', [MahasiswaController::class, 'destroy_proposal'])->name('mahasiswa_proposal.destroy');
     Route::get('penilaiansempro', [MahasiswaController::class, 'penilaian_proposal'])->name('mahasiswa_nilai_proposal');
+    Route::get('/seminar-proposal/{id}', [DosenController::class, 'print_penilaian_proposal'])->name('mahasiswa_print_proposal');
+    Route::get('/mahasiswa/print-proposal/{id}', [MahasiswaController::class, 'printProposal'])->name('mahasiswa_print_proposal');
+
+
+    Route::get('seminar-komprehensif', [MahasiswaController::class, 'showkompre'])->name('mahasiswa_nilai_kompre');
+    Route::post('/seminar-komprehensif/create', [MahasiswaController::class, 'storekompre'])->name('seminar_komprehensif.store');
+    Route::delete('/seminar_komprehensif/{id}', [MahasiswaController::class, 'destroykompre'])->name('seminar_komprehensif.destroy');
+
+    Route::get('penilaian-kompre', [MahasiswaController::class, 'penilaian_komprehensif'])->name('mahasiswa_hasil_kompre');
+    Route::get('/mahasiswa/print-kompre/{id}', [MahasiswaController::class, 'printKomprehensif'])->name('mahasiswa_print_comprehensive');
+
+
+
+
 
 
 });
 
 
-Route::fallback(function () {
-    $user = Auth::user();
-    if ($user) {
-        return redirect()->route('dashboard');
+// Route::fallback(function () {
+//     $user = Auth::user();
+//     if ($user) {
+//         return redirect()->route('dashboard');
  
-    }
-    return redirect()->route('login');
-});
+//     }
+//     return redirect()->route('login');
+// });
 
 
 

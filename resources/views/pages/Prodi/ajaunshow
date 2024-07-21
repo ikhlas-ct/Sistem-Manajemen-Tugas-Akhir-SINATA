@@ -1,0 +1,210 @@
+@extends('layout.master')
+
+@section('title', 'Validasi Seminar Proposal')
+
+@section('content')
+<div class="container">
+    <h2>Validasi Seminar Proposal</h2>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="datatable-container mb-3">
+        @if ($seminarProposals->isNotEmpty())
+            <table id="seminarProposalTable" class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama Mahasiswa</th>
+                        <th class="text-center">Dosen Pembimbing</th>
+                        <th class="text-center">Judul Proposal</th>
+                        <th class="text-center">File KHS</th>
+                        <th class="text-center">Kartu Bimbingan</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($seminarProposals as $seminarProposal)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $seminarProposal->mahasiswaBimbingan->mahasiswa->nama }}</td>
+                            <td>{{ $seminarProposal->mahasiswaBimbingan->dosenpembimbing->dosen->nama }}</td>
+                            <td>{{ $seminarProposal->mahasiswaBimbingan->acceptedJudulTugasAkhirs->judul }}</td>
+                            <td class="text-center">
+                                <a href="{{ asset('uploads/seminar_proposals/' . $seminarProposal->file_KHS) }}" target="_blank">
+                                    <i class="fas fa-file fa-2x text-success"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ asset('uploads/seminar_proposals/' . $seminarProposal->Kartu_Bimbingan) }}" target="_blank">
+                                    <i class="fas fa-file fa-2x text-success"></i>
+                                </a>
+                            </td>
+                            <td>
+                                @if ($seminarProposal->status_prodi == 'diproses')
+                                    <button type="button" class="btn btn-success btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#approvalModal"
+                                            data-id="{{ $seminarProposal->id }}"
+                                            data-dosenpembimbingid="{{ optional($seminarProposal->mahasiswaBimbingan->dosenpembimbing)->dosen_id }}">
+                                        <i class="fa fa-check"></i> Atur Jadwal Seminar
+                                    </button>
+                                @else
+                                    <span class="badge badge-secondary">Sudah diproses</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div class="alert alert-info mt-3">
+                Tidak ada pengajuan seminar yang tersedia untuk divalidasi saat ini.
+            </div>
+        @endif
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="approvalModal" tabindex="-1" role="dialog" aria-labelledby="approvalModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="approvalForm" action="{{ route('prodi.setuju.sempro', ':id') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="seminar_proposal_id" id="seminarProposalId" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="approvalModalLabel">Setujui Seminar Proposal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="dosen_penguji_1_id">Dosen Penguji 1</label>
+                            <select name="dosen_penguji_1_id" id="dosen_penguji_1_id" class="form-control" required>
+                                <option value="" disabled selected>Pilih Dosen Penguji 1</option>
+                                @foreach($dosens as $dosen)
+                                @if ($seminarProposal && $seminarProposal->mahasiswaBimbingan && $seminarProposal->mahasiswaBimbingan->dosenpembimbing)
+                                    @if ($dosen->id != $seminarProposal->mahasiswaBimbingan->dosenpembimbing->dosen_id)
+                                        <option value="{{ $dosen->id }}">{{ $dosen->nama }}</option>
+                                    @endif
+                                @else
+                                    <option value="{{ $dosen->id }}">{{ $dosen->nama }}</option>
+                                @endif
+                            @endforeach
+                            
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dosen_penguji_2_id">Dosen Penguji 2</label>
+                            <select name="dosen_penguji_2_id" id="dosen_penguji_2_id" class="form-control" required>
+                                <option value="" disabled selected>Pilih Dosen Penguji 2</option>
+                                @foreach($dosens as $dosen)
+                                    @if ($dosen->id != optional($seminarProposal->mahasiswaBimbingan->dosenpembimbing)->dosen_id)
+                                        <option value="{{ $dosen->id }}">{{ $dosen->nama }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="tanggal_waktu">Tanggal dan Waktu</label>
+                            <input type="datetime-local" name="tanggal_waktu" id="tanggal_waktu" class="form-control" required min="{{ date('Y-m-d\TH:i') }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ruangan_id">Ruangan</label>
+                            <select name="ruangan_id" id="ruangan_id" class="form-control" required>
+                                <option value="" disabled selected>Pilih Ruangan</option>
+                                @foreach($ruangans as $ruangan)
+                                    <option value="{{ $ruangan->id }}">{{ $ruangan->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#seminarProposalTable').DataTable({
+            "pagingType": "full_numbers",
+            "language": {
+                "search": "Cari:",
+                "paginate": {
+                    "first": "Awal",
+                    "last": "Akhir",
+                    "next": "Berikutnya",
+                    "previous": "Sebelumnya"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">'
+        });
+
+        $('#approvalModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var seminarProposalId = button.data('id');
+            var dosenPembimbingId = button.data('dosenpembimbingid'); // Ambil dari atribut data
+
+            var modal = $(this);
+            modal.find('#seminarProposalId').val(seminarProposalId);
+            modal.find('#approvalForm').attr('action', '{{ route("prodi.setuju.sempro", ":id") }}'.replace(':id', seminarProposalId));
+
+            // Reset select boxes
+            modal.find('#dosen_penguji_1_id').val('').removeAttr('disabled');
+            modal.find('#dosen_penguji_2_id').val('').removeAttr('disabled');
+
+            // Call the function to validate dosen penguji selections
+            validateDosenPengujiSelections(dosenPembimbingId); // Pass dosenPembimbingId sebagai argumen
+        });
+
+        // Function to ensure dosen penguji selections are valid
+        function validateDosenPengujiSelections(dosenPembimbingId) {
+            var dosenPenguji1Id = $('#dosen_penguji_1_id').val();
+            var dosenPenguji2Id = $('#dosen_penguji_2_id').val();
+
+            // Disable selected dosen penguji 1 from dosen penguji 2 options
+            $('#dosen_penguji_2_id option[value="' + dosenPenguji1Id + '"]').attr('disabled', 'disabled');
+
+            // Disable selected dosen penguji 2 from dosen penguji 1 options
+            $('#dosen_penguji_1_id option[value="' + dosenPenguji2Id + '"]').attr('disabled', 'disabled');
+
+            // Ensure dosen penguji 1 is not dosen pembimbing
+            if (dosenPenguji1Id == dosenPembimbingId) {
+                $('#dosen_penguji_2_id option[value="' + dosenPembimbingId + '"]').attr('disabled', 'disabled');
+            }
+
+            // Ensure dosen penguji 2 is not dosen pembimbing and not the same as dosen penguji 1
+            if (dosenPenguji2Id == dosenPembimbingId || dosenPenguji2Id == dosenPenguji1Id) {
+                $('#dosen_penguji_1_id option[value="' + dosenPembimbingId + '"]').attr('disabled', 'disabled');
+            }
+        }
+
+        // Call the function to validate dosen penguji selections when changes occur
+        $('#dosen_penguji_1_id, #dosen_penguji_2_id').change(function() {
+            validateDosenPengujiSelections();
+        });
+
+        // Trigger validation on modal shown
+        $('#approvalModal').on('shown.bs.modal', function () {
+            validateDosenPengujiSelections();
+        });
+
+        // Reset options on modal close
+        $('#approvalModal').on('hidden.bs.modal', function () {
+            $('#dosen_penguji_1_id, #dosen_penguji_2_id').find('option').removeAttr('disabled');
+        });
+    });
+</script>
+
+@endsection

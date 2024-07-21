@@ -63,7 +63,7 @@
                 @foreach ($judulDiterima as $judul)
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
-                        <td class="text-center">{{ $judul->judul }}</td>
+                        <td class="">{{ $judul->judul }}</td>
                         <td>{{ $judul->deskripsi }}</td>
                         <td class="text-center">
                             <a href="{{ asset('uploads/tugas-akhir/' . $judul->file_judul) }}" target="_blank">
