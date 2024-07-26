@@ -115,7 +115,7 @@
                                         <div class="step-label">Seminar Komprehensif</div>
                                     </li>
                                     <li class="step">
-                                        <div class="step-number">7</div>
+                                        <div class="step-number">7                                                        </div>
                                         <div class="step-label">Selesai</div>
                                     </li>
                                 </ul>

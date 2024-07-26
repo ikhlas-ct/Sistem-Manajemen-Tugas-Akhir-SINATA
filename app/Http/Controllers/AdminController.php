@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Models\Ruangans;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Mahasiswa;
@@ -15,6 +14,7 @@ use App\Helpers\AlertHelper;
 use App\Models\Fakultas;
 use App\Models\Prodi;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Ruangan;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -23,6 +23,11 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
+
+
+    public function dashboard(){
+        return view('pages.admin.dashboard');
+    }
     public function update(Request $request)
     {
         $request->validate([
@@ -203,7 +208,7 @@ class AdminController extends Controller
 
     public function index_ruangan()
     {
-        $ruangans = Ruangans::all(); // Mengambil semua data ruangan dari database
+        $ruangans = Ruangan::all(); // Mengambil semua data ruangan dari database
         return view('pages.admin.adminruagan', compact('ruangans'));
     }
 
@@ -215,7 +220,7 @@ class AdminController extends Controller
         ]);
 
         // Simpan data ruangan baru ke dalam database
-        $ruangan = new Ruangans();
+        $ruangan = new Ruangan();
         $ruangan->nama = $request->nama;
         $ruangan->save();
 
@@ -231,7 +236,7 @@ class AdminController extends Controller
         ]);
 
         // Update data ruangan yang sudah ada di database
-        $ruangan = Ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
         $ruangan->nama = $request->nama;
         $ruangan->save();
 
@@ -242,7 +247,7 @@ class AdminController extends Controller
     public function destroy_ruangan($id)
     {
         // Hapus ruangan dari database berdasarkan ID
-        $ruangan = Ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
         $ruangan->delete();
 
         // Redirect dengan pesan sukses

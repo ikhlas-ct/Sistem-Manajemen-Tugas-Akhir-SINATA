@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('mahasiswa_bimbingan_id');
             $table->string('judul_tugas_akhir');
-            $table->int('bab');
+            $table->integer('bab');
             $table->text('deskripsi');
             $table->string('file_path');
             

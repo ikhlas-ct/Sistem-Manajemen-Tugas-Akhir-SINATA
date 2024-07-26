@@ -5,7 +5,7 @@
 @if (FiturHelper::showKaprodi())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-            <a href="./index.html" class="text-nowrap logo-img">
+            <a href="{{route('kaprodi.dashboard') }} class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
                 style="margin-top: 20px; " />
             </a>
@@ -21,7 +21,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ url('dashboard') }}"
+                    <a class="sidebar-link" href="{{route('kaprodi.dashboard') }}"
                         aria-expanded="false">
                         <span>
                             <i class="fas fa-home"></i>
@@ -100,7 +100,7 @@
 @if (FiturHelper::showAdmin())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-            <a href="{{ route('dashboard') }}" class="text-nowrap logo-img">
+            <a href="{{ route('admin.dashboard') }}" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
                 style="margin-top: 20px; " />
             </a>
@@ -116,8 +116,8 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
-                        href="{{ url('dashboard') }}" aria-expanded="false">
+                    <a class="sidebar-link"
+                        href="{{ route('admin.dashboard') }}" aria-expanded="false">
                         <span>
                             <i class="fas fa-home"></i>
                         </span>
@@ -148,16 +148,7 @@
                         </span>
                         <span class="hide-menu">Ruangan</span>
                     </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('tgl_penting') ? 'active' : '' }}"
-                        href="{{ url('tgl_penting') }}" aria-expanded="false">
-                        <span>
-                            <i class="fas fa-calendar-alt"></i>
-                        </span>
-                        <span class="hide-menu">Mahasiswa</span>
-                    </a>
-                </li>
+  
                 <hr>
                 <li class="sidebar-item bg-danger rounded-1">
                     <a class="sidebar-link text-white d-flex justify-content-center w-100" href="{{ url('logout') }}"
@@ -175,7 +166,7 @@
 @if (FiturHelper::showMahasiswa())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-            <a href="./index.html" class="text-nowrap logo-img">
+            <a href="{{ route('mahasiswadashboard') }}" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt=""
                     style="margin-top: 20px; " />
             </a>
@@ -192,8 +183,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
-                        href="{{ url('dashboard') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('mahasiswadashboard') }}" aria-expanded="false">
                         <span>
                             <i class="fas fa-home"></i>
                         </span>
@@ -308,7 +298,7 @@
 @if (FiturHelper::showDosen())
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
-            <a href="./index.html" class="text-nowrap logo-img">
+            <a href="{{ route('dosendashboard') }}" class="text-nowrap logo-img">
                 <img src="{{ asset('assets/images/logos/logo1.png') }}" width="180" alt="" style="margin-top: 20px;" />
             </a>
             <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -322,11 +312,12 @@
                 <li class="nav-small-cap">
                     <span class="hide-menu">Home</span>
                 </li>
+        
                 <li class="sidebar-item">
-                    <a class="sidebar-link {{ Request::is('dashboard') ? 'active' : '' }}"
-                        href="{{ url('dashboard') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('dosendashboard') }}"
+                        aria-expanded="false">
                         <span>
-                            <i class="fa-solid fa-house"></i>
+                            <i class="fas fa-tachometer-alt"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>

@@ -42,13 +42,17 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $konsultasi->mahasiswaBimbingan->mahasiswa->nama }}</td>
-                    <td>{{ $konsultasi->topik }}</td>
+                    <td>
+                        <span class="short-text" title="{{ $konsultasi->topik  }}">
+                            {{ Str::limit($konsultasi->topik , 50) }}
+                        </span>
+                    </td>
                     <td>
                         <span class="short-text" title="{{ $konsultasi->Pembahasan }}">
                             {{ Str::limit($konsultasi->Pembahasan, 50) }}
                         </span>
                     </td>
-                    <td>{{ $konsultasi->tanggal }}</td>
+                    <td>{{ \Carbon\Carbon::parse($konsultasi->tanggal)->format('d F Y') }}</td>
                     <td>
                         @if($konsultasi->status == 'Ditolak')
                             <span class="badge bg-danger">Ditolak</span>

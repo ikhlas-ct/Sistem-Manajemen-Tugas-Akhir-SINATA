@@ -10,7 +10,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table id="seminarTable" class="table table-bordered table-striped">
                     <thead class="thead-dark">
                         <tr>
                             <th>No</th>
@@ -51,7 +51,6 @@
                                         </button>
                                     @endif
                                 </td>
-                                
                             </tr>
                         @endforeach
                     </tbody>
@@ -85,4 +84,26 @@
         margin-top: 20px;
     }
 </style>
+@endsection
+
+@section('scripts')
+
+
+<script>
+    $(document).ready(function() {
+        $('#seminarTable').DataTable({
+            "pagingType": "full_numbers",
+            "language": {
+                "search": "Cari:",
+                "paginate": {
+                    "first": "Awal",
+                    "last": "Akhir",
+                    "next": "Berikutnya",
+                    "previous": "Sebelumnya"
+                }
+            },
+            "dom": '<"top"lf>rt<"bottom"ip><"clear">'
+        });
+    });
+</script>
 @endsection

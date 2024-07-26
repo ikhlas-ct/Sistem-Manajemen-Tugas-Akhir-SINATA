@@ -33,7 +33,48 @@ class DosenController extends Controller
     {
         $this->middleware('role:dosen');
     }
-  
+
+    public function dashboard()
+    {
+        // Ambil ID dosen yang sedang login
+        $dosenId = auth()->user()->id;
+    
+        // Hitung jumlah mahasiswa bimbingan yang terhubung dengan dosen ini
+        $mahasiswaCount = MahasiswaBimbingan::whereHas('dosenPembimbing', function ($query) use ($dosenId) {
+            $query->where('dosen_id', $dosenId);
+        })->count();
+    
+        // Hitung jumlah PenilaianSeminar yang terhubung dengan dosen ini
+        $penilaianSeminarCount = PenilaianSeminar::whereHas('seminarProposal', function ($query) use ($dosenId) {
+            $query->where(function ($subQuery) use ($dosenId) {
+                $subQuery->where('dosen_penguji_1_id', $dosenId)
+                         ->orWhere('dosen_penguji_2_id', $dosenId);
+            });
+        })->count();
+    
+        // Hitung jumlah PenilaianSeminarKomprehensif yang terhubung dengan dosen ini
+        $penilaianKomprehensifCount = PenilaianSeminarKomprehensif::whereHas('seminarKomprehensif', function ($query) use ($dosenId) {
+            $query->where(function ($subQuery) use ($dosenId) {
+                $subQuery->where('dosen_penguji_1_id', $dosenId)
+                         ->orWhere('dosen_penguji_2_id', $dosenId);
+            });
+        })->count();
+    
+        // Jumlahkan total dari PenilaianSeminar dan PenilaianSeminarKomprehensif
+        $totalPenilaian = $penilaianSeminarCount + $penilaianKomprehensifCount;
+    
+        // Hitung jumlah konsultasi yang terhubung dengan dosen ini dan belum terlewat
+        $today = \Carbon\Carbon::today();
+        $konsultasi = Konsultasi::whereHas('mahasiswaBimbingan', function ($query) use ($dosenId) {
+            $query->whereHas('dosenPembimbing', function ($subQuery) use ($dosenId) {
+                $subQuery->where('dosen_id', $dosenId);
+            });
+        })->whereDate('tanggal', '>=', $today)->count();
+    
+        return view('pages.dosen.dashboard', compact('mahasiswaCount', 'totalPenilaian', 'konsultasi'));
+    }
+    
+    
     public function profile()
     {
         // dd(Auth::user()->dosen);
@@ -87,10 +128,7 @@ class DosenController extends Controller
     }
 
     
-    public function konsultasi_show()
-    {
-        return view('Mahasiswa.Konsultasi.konsultasi');
-    }
+
 
 public function updatePassword(Request $request)
 {
@@ -233,22 +271,25 @@ public function rejectTitle(Request $request, $id)
 
 
 public function rutekonsultasi()
-    {
-        $dosenId = Auth::user()->dosen->id; // Ambil ID dosen yang sedang login
+{
+    $dosenId = Auth::user()->dosen->id; // Ambil ID dosen yang sedang login
 
-        // Ambil semua data konsultasi terkait dosen yang sedang login
-        $konsultasis = Konsultasi::with('mahasiswaBimbingan.mahasiswa')
-            ->whereHas('mahasiswaBimbingan.dosenPembimbing', function($query) use ($dosenId) {
-                $query->where('dosen_id', $dosenId);
-            })->get();
-
-        // Ambil daftar nama mahasiswa dari mahasiswaBimbingan terkait dosen yang sedang login
-        $mahasiswaList = Mahasiswa::whereHas('mahasiswaBimbingans.dosenPembimbing', function($query) use ($dosenId) {
+    // Ambil semua data konsultasi terkait dosen yang sedang login, diurutkan berdasarkan tanggal terbaru
+    $konsultasis = Konsultasi::with('mahasiswaBimbingan.mahasiswa')
+        ->whereHas('mahasiswaBimbingan.dosenPembimbing', function($query) use ($dosenId) {
             $query->where('dosen_id', $dosenId);
-        })->get();
+        })
+        ->orderBy('tanggal', 'desc') // Urutkan berdasarkan tanggal terbaru
+        ->get();
 
-        return view('pages.dosen.konsultasimahasiswa', compact('konsultasis', 'mahasiswaList'));
-    }
+    // Ambil daftar nama mahasiswa dari mahasiswaBimbingan terkait dosen yang sedang login
+    $mahasiswaList = Mahasiswa::whereHas('mahasiswaBimbingans.dosenPembimbing', function($query) use ($dosenId) {
+        $query->where('dosen_id', $dosenId);
+    })->get();
+
+    return view('pages.dosen.konsultasimahasiswa', compact('konsultasis', 'mahasiswaList'));
+}
+
 
 
 public function respond(Request $request, $id)

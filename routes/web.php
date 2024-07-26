@@ -11,7 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Middleware\RoleMiddleware;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +31,6 @@ Route::post('/login', [LoginController::class, 'authenticate'])->name('login.pos
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [MahasiswaController::class, 'update'])->name('profileUpdate');
 });
@@ -102,7 +101,7 @@ Route::middleware(['auth', 'role:kaprodi'])->group(function () {
 // // Dosen routes
 Route::middleware(['auth', 'role:dosen'])->group(function () {
 
-    Route::get('dosen/dashboard', [DosenController::class, 'dashboard'])->name('dosen.dashboard');
+    Route::get('/dosen/dashboard', [DosenController::class, 'dashboard'])->name('dosendashboard');
     Route::get('dosen/profile', [DosenController::class, 'profile'])->name('dosen.profile');
     Route::put('/dosen/profile/update', [DosenController::class, 'updateProfile'])->name('dosen.profile.update');
     Route::get('/konsultasi', [DosenController::class, 'konsultasi_show'])->name('Halaman_Konsultasi');
@@ -147,8 +146,8 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 });
 
 // // Mahasiswa routes
-Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
-    Route::get('mahasiswa/dashboard', [MahasiswaController::class, 'index'])->name('halamanDashboard');
+Route::middleware(['auth','role:mahasiswa'])->group(function () {
+    Route::get('/mahasiswa/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswadashboard');
     Route::put('/passwordProdi/update', [MahasiswaController::class, 'updatePassword'])->name('passwordUpdateMahasiswa');
     // pemilihan pembimbing_mahasiswa
     Route::get('/pemilihan', [MahasiswaController::class, 'pemilihan_pembimbing'])->name('mahasiswa_halamanPemilihan');

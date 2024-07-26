@@ -37,16 +37,16 @@
         <table id="roomsTable" class="table table-bordered mt-3">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nama Ruangan</th>
-                    <th>Aksi</th>
+                    <th class="text-center">NO</th>
+                    <th class="text-center">Nama Ruangan</th>
+                    <th class="text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($ruangans as $ruangan)
                     <tr>
-                        <td>{{ $ruangan->id }}</td>
-                        <td>{{ $ruangan->nama }}</td>
+                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $ruangan->nama }}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editRoomModal" data-id="{{ $ruangan->id }}" data-nama="{{ $ruangan->nama }}"><i class="fas fa-edit"></i> Edit</button>
                             <form action="{{ route('admin.ruangans.delete', $ruangan->id) }}" method="POST" style="display: inline-block;">

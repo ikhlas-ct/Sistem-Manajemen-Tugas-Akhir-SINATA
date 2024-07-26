@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class RoleMiddleware
 {
@@ -14,15 +16,18 @@ class RoleMiddleware
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-
+    
         $user = Auth::user();
-
+    
         foreach ($roles as $role) {
             if ($user->role === $role) {
                 return $next($request); // Izinkan akses ke rute yang diminta
             }
         }
-
-        return redirect('dashboard'); // Halaman default jika role tidak sesuai
+    
+        // Jika tidak sesuai peran, alihkan ke halaman dashboard default
+        return redirect('dashboard');
     }
+    
+    
 }

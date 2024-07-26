@@ -39,7 +39,9 @@ class MahasiswaController extends Controller
         }
     
         // Mengambil data bimbingan
-        $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
+        $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)
+            ->with('dosenPembimbing') // Memuat relasi dosenPembimbing
+            ->get();
     
         if ($mahasiswaBimbingans->isEmpty()) {
             // Handle if no bimbingans found
@@ -71,7 +73,7 @@ class MahasiswaController extends Controller
                                                   ->where('status_prodi', 'lulus')
                                                   ->first();
     
-        return view('pages.dashboard.index', compact(
+        return view('pages.Mahasiswa.dashboard', compact(
             'mahasiswa', 'mahasiswaBimbingans', 'judul', 'logbooks', 'konsultasis', 'seminarProposal', 'seminarKomprehensif'
         ));
     }
@@ -370,7 +372,7 @@ public function logbook_store(Request $request)
         $seminarProposal = SeminarProposal::where('mahasiswa_bimbingan_id', $mahasiswaBimbinganId)
                                           ->first();
 
-        if (!$seminarProposal || $seminarProposal->status_lulus !== 'lulus') {
+        if (!$seminarProposal || $seminarProposal->status_prodi !== 'lulus') {
             return redirect()->route('mahasiswa_input_logbook')->withErrors('Seminar proposal belum lulus, Anda tidak dapat mengisi logbook untuk bab 4.');
         }
     }
@@ -563,7 +565,8 @@ public function penilaian_proposal()
     $mahasiswaBimbingans = MahasiswaBimbingan::where('mahasiswa_id', $mahasiswaId)->get();
     $seminarProposals = SeminarProposal::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)->get();
 
-    $acceptedProposal = SeminarProposal::where('status_prodi', 'diterima')
+    $acceptedProposal = SeminarProposal::whereIn('mahasiswa_bimbingan_id', $mahasiswaBimbinganIds)
+        ->whereIn('status_prodi', ['diterima', 'direvisi', 'lulus']) // Adjusted to include both statuses
         ->with(['mahasiswaBimbingan.mahasiswa', 'dosenPenguji1', 'dosenPenguji2', 'ruangan', 'penilaianSeminars.pertanyaan'])
         ->first();
 
@@ -580,7 +583,7 @@ public function penilaian_proposal()
     $totalNilaiDosenPenguji2 = 0;
     $totalBobotDosenPenguji2 = 0;
 
-    if ($acceptedProposal) {
+    if ($acceptedProposal && $acceptedProposal->penilaianSeminars) {
         foreach ($acceptedProposal->penilaianSeminars as $penilaian) {
             if ($penilaian->dosen_id == $acceptedProposal->dosen_penguji_1_id) {
                 $totalNilaiDosenPenguji1 += $penilaian->nilai * $penilaian->pertanyaan->bobot;
@@ -601,7 +604,7 @@ public function penilaian_proposal()
     // Menentukan status lulus
     $statusLulus = 'Direvisi'; // Default status
     if ($nilaiRataRata > 65) {
-        if ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2) {
+        if ($acceptedProposal && ($acceptedProposal->komentar_penguji_1 || $acceptedProposal->komentar_penguji_2)) {
             $statusLulus = 'Lulus dengan Perbaikan';
         } else {
             $statusLulus = 'Lulus';

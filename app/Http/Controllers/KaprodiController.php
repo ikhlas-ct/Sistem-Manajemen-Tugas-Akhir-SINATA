@@ -19,6 +19,14 @@ use App\Models\Dosen;
 
 class KaprodiController extends Controller
 {
+
+    public function dashboard()
+    {
+        return view('pages.prodi.dashboard');
+    }
+
+
+
     public function __construct()
     {
         $this->middleware('role:kaprodi');

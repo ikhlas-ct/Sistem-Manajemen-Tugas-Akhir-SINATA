@@ -1,132 +1,119 @@
 @extends('layout.master')
 
-@section('title', 'Daftar Seminar Proposal')
+@section('title', 'Dashboard Dosen')
 
 @section('content')
-<div class="container mt-5">
-    <div class="col-lg-12">
-        <div class="card overflow-hidden">
-            <div class="card-body p-4">
-                <h5 class="card-title mb-9 fw-semibold">Dashboard Mahasiswa</h5>
-                
-                <!-- Progress Skripsi Saya Section -->
-                <div class="progress-skripsi">
-                    <h6 class="mb-4">Progress Skripsi Saya</h6>
-                    <div class="progress-container">
-                        <ul class="progress-steps">
-                            <li class="step {{ isset($judul) ? 'completed' : '' }}">
-                                <div class="step-number">1</div>
-                                <div class="step-label">Pemilihan Pembimbing</div>
-                            </li>
-                            <li class="step {{ isset($konsultasis) && count($konsultasis) > 0 ? 'completed' : '' }}">
-                                <div class="step-number">2</div>
-                                <div class="step-label">Proses Bimbingan Skripsi</div>
-                            </li>
-                            <li class="step {{ isset($seminarProposal) ? 'completed' : '' }}">
-                                <div class="step-number">3</div>
-                                <div class="step-label">Seminar Proposal</div>
-                            </li>
-                            <li class="step {{ isset($seminarKomprehensif) ? 'completed' : '' }}">
-                                <div class="step-number">4</div>
-                                <div class="step-label">Seminar Komprehensif</div>
-                            </li>
-                            <li class="step {{ isset($judul) && $judul->status == 'selesai' ? 'completed' : '' }}">
-                                <div class="step-number">5</div>
-                                <div class="step-label">Selesai</div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="skripsi-details mt-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>JUDUL:</h6>
-                                <p>{{ $judul->judul ?? 'Belum ada judul' }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Jurusan:</h6>
-                                <p>{{ $mahasiswa->jurusan ?? 'Tidak diketahui' }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>PEMBIMBING:</h6>
-                                <p>{{ $pembimbing->dosen->nama ?? 'Belum ada pembimbing' }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>JADWAL KONSULTASI:</h6>
-                                <p>{{ $konsultasis->first()->tanggal ?? 'Belum ada jadwal konsultasi' }}</p>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <h6>Deskripsi:</h6>
-                            <p>
-                                {{ $judul->deskripsi ?? 'Belum ada deskripsi' }}
-                            </p>
-                        </div>
+<div class="container h-100 d-flex flex-column">
+  <h1>Dashboard Dosen</h1>
+  <div class="row flex-grow-1">
+    <div class="col-lg-4 ">
+        <div class="card card-custom h-75">
+            <img src="{{ asset('assets/images/products/lautan.jpg') }}" class="card-img h-100" alt="Mahasiswa Bimbingan" style="object-fit: cover;">
+            <div class="card-img-overlay d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center" style="flex: 1;">
+                    <div>
+                        <h5 class="card-title text-white">Mahasiswa Bimbingan</h5>
+                        <h3 class="fw-bold text-white">{{ $mahasiswaCount }}</h3>
                     </div>
                 </div>
-                <!-- End Progress Skripsi Saya Section -->
+                <div>
+                    <i class="fas fa-users fa-4x"></i>
+                </div>
             </div>
         </div>
     </div>
+    <div class="col-lg-4 ">
+        <div class="card card-custom h-75">
+            <img src="{{ asset('assets/images/products/sakura.jpg') }}" class="card-img h-100" alt="Pengujian Mahasiswa" style="object-fit: cover;">
+            <div class="card-img-overlay d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center" style="flex: 1;">
+                    <div>
+                        <h5 class="card-title text-white">Pengujian Mahasiswa</h5>
+                        <h3 class="fw-bold text-white">{{ $totalPenilaian }}</h3>
+                    </div>
+                </div>
+                <div>
+                    <i class="fas fa-user-check fa-4x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 ">
+        <div class="card card-custom h-75">
+            <img src="{{ asset('assets/images/products/gunung.jpeg') }}" class="card-img h-100" alt="Bimbingan Skripsi" style="object-fit: cover;">
+            <div class="card-img-overlay d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center" style="flex: 1;">
+                    <div>
+                        <h5 class="card-title text-white">Bimbingan Skripsi</h5>
+                        <h3 class="fw-bold text-white">{{ $konsultasi }}</h3>
+                    </div>
+                </div>
+                <div>
+                    <i class="fas fa-book-open fa-4x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="card card-custom">
+        <img src="{{ asset('assets/images/products/51.jpg') }}" class="card-img" alt="Bimbingan Skripsi">
+        <div class="card-img-overlay d-flex align-items-center justify-content-center">
+            <h5 class="card-title text-white text-center">
+                Selamat Datang di Menu Utama <br>
+                Sistem Informasi Manajemen Skripsi Universitas Sinata
+            </h5>
+        </div>
+    </div>
+    
+  </div>
 </div>
 @endsection
 
 @section('styles')
 <style>
-    
-    .progress-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .progress-steps {
-        list-style: none;
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-    }
-    .progress-steps .step {
-        text-align: center;
-        position: relative;
-        flex: 1;
-    }
-    .progress-steps .step::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        height: 4px;
-        width: 100%;
-        background-color: #ddd;
-        z-index: -1;
-    }
-    .progress-steps .step.completed::before {
-        background-color: #007bff;
-    }
-    .progress-steps .step:first-child::before {
-        display: none;
-    }
-    .progress-steps .step .step-number {
-        width: 40px;
-        height: 40px;
-        background-color: #ddd;
-        border-radius: 50%;
-        line-height: 40px;
-        margin: 0 auto 10px;
-        position: relative;
-        z-index: 1;
-    }
-    .progress-steps .step.completed .step-number {
-        background-color: #007bff;
-        color: white;
-    }
-    .progress-steps .step .step-label {
-        font-size: 14px;
-        color: #333;
-    }
-</style>
+html, body {
+    height: 100%;
+    overflow: hidden; /* Mencegah scroll pada seluruh halaman */
+}
 
+.container {
+    height: 100%;
+    overflow: hidden; /* Mencegah scroll pada kontainer utama */
+}
+.card-custom {
+    position: relative;
+    overflow: hidden;
+    height: 50vh; /* Set the desired height */
+    margin-bottom: 0; /* Menghapus margin bawah dari card */
+}
+
+.card-img {
+    width: 100%;
+    height: 100%; /* Sesuaikan tinggi gambar dengan container */
+    object-fit: cover ; /* Menampilkan gambar secara proporsional */
+    object-position: center; /* Memusatkan gambar di dalam container */
+}
+
+.card-img-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center; /* Membuat konten di tengah secara horizontal */
+    align-items: center; /* Membuat konten di tengah secara vertikal */
+    padding: 20px;
+    background: none; /* Menghapus background overlay */
+}
+
+.card-title {
+    margin-bottom: 0;
+}
+
+.fas {
+    margin-left: 20px; /* Memberikan jarak antara ikon dan teks */
+}
+</style>
 @endsection

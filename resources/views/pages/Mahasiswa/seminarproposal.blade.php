@@ -183,6 +183,8 @@
                             <span class="badge bg-danger badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @elseif($proposal->status_prodi == 'diproses')
                             <span class="badge bg-secondary badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
+                            @elseif($proposal->status_prodi == 'lulus')
+                            <span class="badge bg-success badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @elseif($proposal->status_prodi == 'diterima')
                             <span class="badge bg-success badge-pill">{{ ucfirst($proposal->status_prodi) }}</span>
                         @endif
